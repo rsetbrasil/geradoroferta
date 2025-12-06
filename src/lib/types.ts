@@ -1,3 +1,5 @@
+import { Timestamp } from "firebase/firestore";
+
 export type Offer = {
   description: string;
   price: string;
@@ -10,6 +12,15 @@ export type Offer = {
   logoUrl?: string;
   productImageUrl?: string;
 };
+
+export type OfferDocument = Omit<Offer, 'validity'> & {
+  validity: {
+    from: Timestamp | Date | undefined;
+    to: Timestamp | Date | undefined;
+  };
+  userId: string;
+  updatedAt: Timestamp;
+}
 
 export type Template = {
   id: string;
