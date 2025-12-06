@@ -147,7 +147,7 @@ export function OfferForm({ offer, onOfferChange }: OfferFormProps) {
                     <FormItem>
                       <FormLabel>Preço</FormLabel>
                       <FormControl>
-                        <Input placeholder="Ex: 29,99" {...field} />
+                        <Input placeholder="Ex: 8,00" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -158,9 +158,9 @@ export function OfferForm({ offer, onOfferChange }: OfferFormProps) {
                   name="discount"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Desconto (Opcional)</FormLabel>
+                      <FormLabel>Detalhe (Opcional)</FormLabel>
                       <FormControl>
-                        <Input placeholder="Ex: 50% OFF" {...field} />
+                        <Input placeholder="Ex: *LIMÃO & FRUTAS VERMELHAS*" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

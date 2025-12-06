@@ -24,11 +24,12 @@ export function TemplateSelector({
 }: TemplateSelectorProps) {
   const [mockOffer, setMockOffer] = useState<Offer>({
     description: "Nome do Produto",
-    price: "100,00",
+    price: "8,00",
     discount: "50% OFF",
     validity: { from: undefined, to: undefined },
   });
 
+  // Set initial date on client to avoid hydration errors
   useEffect(() => {
     const fromDate = new Date();
     const toDate = new Date();
@@ -45,7 +46,7 @@ export function TemplateSelector({
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {templates.map((template) => (
             <div
               key={template.id}
@@ -58,10 +59,11 @@ export function TemplateSelector({
               )}
             >
               <div
-                className="pointer-events-none bg-white aspect-[3/4] overflow-hidden"
-                style={{ transform: "scale(0.25)", transformOrigin: "top left", height: '180px', width: '135px' }}
+                className="pointer-events-none bg-white aspect-[210/297] w-full overflow-hidden"
               >
-                <template.component offer={mockOffer} />
+                <div style={{ transform: "scale(0.25)", transformOrigin: "top left", width: '400%', height: '400%' }}>
+                  <template.component offer={mockOffer} />
+                </div>
               </div>
               <p className="text-sm font-medium text-center mt-2">{template.name}</p>
             </div>

@@ -8,19 +8,21 @@ import { TemplateSelector } from "@/components/template-selector";
 import { Header } from "@/components/header";
 import { ClassicDealTemplate } from "@/components/templates/classic-deal";
 import { ModernSplashTemplate } from "@/components/templates/modern-splash";
+import { BlackFridayTemplate } from "@/components/templates/black-friday";
 import { Button } from "@/components/ui/button";
 import { Printer } from "lucide-react";
 
 const templates: Template[] = [
+  { id: "black-friday", name: "Black Friday", component: BlackFridayTemplate },
   { id: "classic", name: "Oferta Clássica", component: ClassicDealTemplate },
   { id: "modern", name: "Splash Moderno", component: ModernSplashTemplate },
 ];
 
 export default function Home() {
   const [offer, setOffer] = useState<Offer>({
-    description: "Fones de Ouvido Sem Fio de Alta Qualidade com Cancelamento de Ruído",
-    price: "99,99",
-    discount: "25% OFF",
+    description: "CERVEJA LONG NECK SOL 330ML",
+    price: "8,00",
+    discount: "*LIMÃO & FRUTAS VERMELHAS*",
     validity: {
       from: undefined,
       to: undefined,
@@ -30,6 +32,7 @@ export default function Home() {
     templates[0].id
   );
   
+  // Set initial date on client to avoid hydration errors
   useEffect(() => {
     const fromDate = new Date();
     const toDate = new Date();
