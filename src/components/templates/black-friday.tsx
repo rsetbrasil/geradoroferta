@@ -2,17 +2,18 @@
 import type { Offer } from "@/lib/types";
 
 export const BlackFridayTemplate: React.FC<{ offer: Offer }> = ({ offer }) => {
-  const { description, subDescription, price, discount, unit, logoUrl, productImageUrl, headlineText, fontSize } = offer;
+  const { description, subDescription, price, discount, unit, logoUrl, productImageUrl, headlineText, fontSize, headlineFontSize } = offer;
   const [integerPart, decimalPart] = (price || "0,00").split(',');
   const sizeMultiplier = (fontSize || 100) / 100;
+  const headlineSizeMultiplier = (headlineFontSize || 100) / 100;
 
   return (
-    <div className="font-body w-full h-full flex flex-col bg-black text-black relative">
+    <div className="font-body w-full h-full flex flex-col bg-black text-black">
       {/* Header Section */}
       <div className="bg-black text-white p-4 flex justify-between items-center">
         <div className="flex flex-col items-start justify-center">
           {headlineText && (
-            <h3 className="font-bold uppercase text-yellow-400" style={{ fontSize: `${2.5 * sizeMultiplier}rem` }}>{headlineText}</h3>
+            <h3 className="font-bold uppercase text-yellow-400" style={{ fontSize: `${2.5 * headlineSizeMultiplier}rem` }}>{headlineText}</h3>
           )}
         </div>
         <div className="flex items-center space-x-2">
@@ -35,11 +36,11 @@ export const BlackFridayTemplate: React.FC<{ offer: Offer }> = ({ offer }) => {
       
       {/* Main Content */}
       <div className="flex-grow flex flex-col items-center justify-center text-center p-4 z-10 bg-white">
-        {productImageUrl ? (
+        {productImageUrl && (
           <div className="relative w-[150px] h-[120px] mb-4">
               <img src={productImageUrl} alt="Produto" className="w-full h-full object-contain" />
           </div>
-        ) : null}
+        )}
         <h2 className="font-extrabold leading-tight mb-2 uppercase text-black" style={{ fontSize: `${3 * sizeMultiplier}rem` }}>
           {description || "Descrição do Produto"}
         </h2>

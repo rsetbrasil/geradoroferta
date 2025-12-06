@@ -63,6 +63,7 @@ export default function Home() {
       unit: "UND",
       validity: { from: fromDate, to: toDate },
       fontSize: 100,
+      headlineFontSize: 100,
     };
 
     if (!isOfferLoading && user) {

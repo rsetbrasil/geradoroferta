@@ -46,6 +46,7 @@ const offerSchema = z.object({
   logoUrl: z.string().optional(),
   productImageUrl: z.string().optional(),
   fontSize: z.number().optional(),
+  headlineFontSize: z.number().optional(),
 });
 
 interface OfferFormProps {
@@ -143,6 +144,25 @@ export function OfferForm({ offer, onOfferChange }: OfferFormProps) {
                   </FormItem>
                 )}
               />
+
+              <FormField
+                control={form.control}
+                name="headlineFontSize"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Tamanho da Fonte do Título ({field.value}%)</FormLabel>
+                    <FormControl>
+                        <Slider
+                            defaultValue={[field.value || 100]}
+                            onValueChange={(value) => field.onChange(value[0])}
+                            max={200}
+                            step={1}
+                        />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+
               <FormField
                 control={form.control}
                 name="description"
@@ -245,7 +265,7 @@ export function OfferForm({ offer, onOfferChange }: OfferFormProps) {
                 name="fontSize"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Tamanho da Fonte ({field.value}%)</FormLabel>
+                    <FormLabel>Tamanho da Fonte do Corpo ({field.value}%)</FormLabel>
                     <FormControl>
                         <Slider
                             defaultValue={[field.value || 100]}
