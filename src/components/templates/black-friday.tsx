@@ -40,11 +40,11 @@ export const BlackFridayTemplate: React.FC<{ offer: Offer }> = ({ offer }) => {
                 <div className="w-full h-full bg-transparent"></div>
             )}
         </div>
-        <h2 className="text-7xl md:text-8xl font-extrabold leading-tight mb-2 uppercase text-black">
+        <h2 className="text-8xl md:text-9xl font-extrabold leading-tight mb-2 uppercase text-black">
           {description || "Descrição do Produto"}
         </h2>
         {subDescription && (
-            <p className="text-4xl font-semibold leading-tight mb-4 text-gray-700">{subDescription}</p>
+            <p className="text-5xl font-semibold leading-tight mb-4 text-gray-700">{subDescription}</p>
         )}
         
         <div className="flex items-start justify-center gap-1 my-4 text-black">
@@ -64,7 +64,7 @@ export const BlackFridayTemplate: React.FC<{ offer: Offer }> = ({ offer }) => {
       </div>
 
       {/* Footer */}
-      <div className="bg-red-600 text-white text-center py-3 z-10">
+      <div className="bg-red-600 text-white text-center py-3 z-10 mt-auto">
         <h3 className="text-4xl font-extrabold tracking-wide">IMPERDÍVEL</h3>
       </div>
     </div>
