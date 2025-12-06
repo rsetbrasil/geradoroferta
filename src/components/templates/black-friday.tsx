@@ -1,3 +1,4 @@
+'use client';
 import type { Offer } from "@/lib/types";
 
 export const BlackFridayTemplate: React.FC<{ offer: Offer }> = ({ offer }) => {
@@ -11,7 +12,7 @@ export const BlackFridayTemplate: React.FC<{ offer: Offer }> = ({ offer }) => {
       <div className="bg-black text-white p-4 flex justify-between items-center">
         <div className="flex flex-col items-start justify-center">
           {headlineText && (
-            <h3 className="font-bold uppercase text-yellow-400" style={{ fontSize: `${7 * sizeMultiplier}xl` }}>{headlineText}</h3>
+            <h3 className="font-bold uppercase text-yellow-400" style={{ fontSize: `${2.5 * sizeMultiplier}rem` }}>{headlineText}</h3>
           )}
         </div>
         <div className="flex items-center space-x-2">
@@ -34,31 +35,31 @@ export const BlackFridayTemplate: React.FC<{ offer: Offer }> = ({ offer }) => {
       
       {/* Main Content */}
       <div className="flex-grow flex flex-col items-center justify-center text-center p-4 z-10 bg-white">
-        {productImageUrl && (
+        {productImageUrl ? (
           <div className="relative w-[150px] h-[120px] mb-4">
               <img src={productImageUrl} alt="Produto" className="w-full h-full object-contain" />
           </div>
-        )}
-        <h2 className="font-extrabold leading-tight mb-2 uppercase text-black" style={{ fontSize: `${5 * sizeMultiplier}xl` }}>
+        ) : null}
+        <h2 className="font-extrabold leading-tight mb-2 uppercase text-black" style={{ fontSize: `${3 * sizeMultiplier}rem` }}>
           {description || "Descrição do Produto"}
         </h2>
         {subDescription && (
-            <p className="font-semibold leading-tight mb-4 text-gray-700" style={{ fontSize: `${4 * sizeMultiplier}xl` }}>{subDescription}</p>
+            <p className="font-semibold leading-tight mb-4 text-gray-700" style={{ fontSize: `${2 * sizeMultiplier}rem` }}>{subDescription}</p>
         )}
         
         <div className="flex items-start justify-center gap-1 my-4 text-black">
-            <span className="font-bold mt-4" style={{ fontSize: `${5 * sizeMultiplier}xl` }}>R$</span>
+            <span className="font-bold mt-4" style={{ fontSize: `${2.5 * sizeMultiplier}rem` }}>R$</span>
             <span className="font-extrabold leading-none" style={{ fontSize: `${150 * sizeMultiplier}px`}}>
                 {integerPart}
             </span>
             <div className="flex flex-col items-start mt-4">
-                <span className="font-bold -mb-2" style={{ fontSize: `${5 * sizeMultiplier}xl` }}>,{decimalPart}</span>
-                <span className="font-bold" style={{ fontSize: `${4 * sizeMultiplier}xl` }}>{unit || "UND"}</span>
+                <span className="font-bold -mb-2" style={{ fontSize: `${2.5 * sizeMultiplier}rem` }}>,{decimalPart}</span>
+                <span className="font-bold" style={{ fontSize: `${2 * sizeMultiplier}rem` }}>{unit || "UND"}</span>
             </div>
         </div>
 
         {discount && (
-             <p className="font-bold bg-black text-yellow-400 px-6 py-3" style={{ fontSize: `${3 * sizeMultiplier}xl` }}>* {discount} *</p>
+             <p className="font-bold bg-black text-yellow-400 px-6 py-3" style={{ fontSize: `${1.5 * sizeMultiplier}rem` }}>* {discount} *</p>
         )}
       </div>
 
