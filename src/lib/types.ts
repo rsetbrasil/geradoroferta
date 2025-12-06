@@ -6,6 +6,7 @@ export type Offer = {
     from: Date | undefined;
     to: Date | undefined;
   };
+  logoUrl?: string;
 };
 
 export type Template = {

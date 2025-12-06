@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useTransition } from "react";
+import { useEffect, useTransition, useRef } from "react";
 import { useForm, FormProvider, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -25,7 +25,7 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { getOptimizedDescription } from "@/lib/actions";
 import type { Offer } from "@/lib/types";
-import { Loader2, Sparkles } from "lucide-react";
+import { Loader2, Sparkles, Upload } from "lucide-react";
 import { DateRangePicker } from "./date-range-picker";
 import type { DateRange } from "react-day-picker";
 
@@ -39,6 +39,7 @@ const offerSchema = z.object({
     from: z.date().optional(),
     to: z.date().optional(),
   }),
+  logoUrl: z.string().optional(),
 });
 
 interface OfferFormProps {
@@ -49,6 +50,7 @@ interface OfferFormProps {
 export function OfferForm({ offer, onOfferChange }: OfferFormProps) {
   const { toast } = useToast();
   const [isPending, startTransition] = useTransition();
+  const logoInputRef = useRef<HTMLInputElement>(null);
 
   const form = useForm<Offer>({
     resolver: zodResolver(offerSchema),
@@ -89,6 +91,17 @@ export function OfferForm({ offer, onOfferChange }: OfferFormProps) {
         });
       }
     });
+  };
+
+  const handleLogoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setValue("logoUrl", reader.result as string, { shouldDirty: true });
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   return (
@@ -167,6 +180,29 @@ export function OfferForm({ offer, onOfferChange }: OfferFormProps) {
                   )}
                 />
               </div>
+              
+              <FormItem>
+                <FormLabel>Logo da Empresa</FormLabel>
+                <div className="flex items-center gap-4">
+                    <Button type="button" variant="outline" onClick={() => logoInputRef.current?.click()}>
+                        <Upload className="mr-2 h-4 w-4" />
+                        Carregar Logo
+                    </Button>
+                    <input
+                        type="file"
+                        ref={logoInputRef}
+                        onChange={handleLogoUpload}
+                        accept="image/png, image/jpeg, image/svg+xml"
+                        className="hidden"
+                    />
+                     {watch("logoUrl") && (
+                        <Button type="button" variant="ghost" size="sm" onClick={() => setValue("logoUrl", undefined, { shouldDirty: true })}>
+                            Remover
+                        </Button>
+                    )}
+                </div>
+                <FormMessage />
+              </FormItem>
 
               <Controller
                 control={form.control}

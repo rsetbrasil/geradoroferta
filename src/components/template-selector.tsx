@@ -27,6 +27,7 @@ export function TemplateSelector({
     price: "8,00",
     discount: "50% OFF",
     validity: { from: undefined, to: undefined },
+    logoUrl: undefined,
   });
 
   // Set initial date on client to avoid hydration errors
