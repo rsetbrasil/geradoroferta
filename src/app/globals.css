@@ -58,8 +58,15 @@
   }
 }
 
+@page {
+  size: A4;
+  margin: 0;
+}
+
 @media print {
-  body {
+  html, body {
+    height: 100%;
+    width: 100%;
     background-color: #fff !important;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
@@ -70,6 +77,8 @@
   #print-area-container {
     padding: 0 !important;
     margin: 0 !important;
+    height: 100%;
+    width: 100%;
   }
   #print-area {
     visibility: visible !important;
@@ -84,6 +93,8 @@
     box-shadow: none !important;
     border: none !important;
     border-radius: 0 !important;
+    display: flex;
+    flex-direction: column;
   }
   #print-area * {
     visibility: visible !important;
