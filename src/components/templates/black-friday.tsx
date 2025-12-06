@@ -3,7 +3,7 @@
 // This file is a static data provider for the initial template seeding.
 // It exports a string of HTML with Handlebars-like syntax for dynamic rendering.
 export const blackFridayTemplateString = `
-<div class="font-body w-full h-full flex flex-col bg-white text-black print:justify-between">
+<div class="font-body w-full h-full flex flex-col bg-white text-black">
     <div class="bg-black text-white p-4 flex justify-between items-center">
         <div class="flex flex-col items-start justify-center">
             {{#if headlineText}}
@@ -13,7 +13,7 @@ export const blackFridayTemplateString = `
         <div data-logo-container></div>
     </div>
     <div class="w-full h-1 bg-red-600"></div>
-    <div class="flex flex-col items-center justify-center text-center p-4 bg-white">
+    <div class="flex flex-col items-center justify-center text-center p-4 bg-white flex-1">
         <div data-product-image-container></div>
         <h2 class="font-extrabold leading-tight mb-2 uppercase text-black" style="font-size: calc(3rem * var(--size-multiplier));">
             {{description}}
@@ -38,7 +38,7 @@ export const blackFridayTemplateString = `
         {{/if}}
     </div>
 
-    <div class="bg-red-600 text-white text-center py-3 mt-auto">
+    <div class="bg-red-600 text-white text-center py-3">
         <h3 class="text-4xl font-extrabold tracking-wide">IMPERDÍVEL</h3>
     </div>
 </div>
