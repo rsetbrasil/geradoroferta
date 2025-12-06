@@ -33,23 +33,21 @@ export const BlackFridayTemplate: React.FC<{ offer: Offer }> = ({ offer }) => {
       
       {/* Main Content */}
       <div className="flex-grow flex flex-col items-center justify-start text-center p-4 pt-12 z-10 bg-white">
-        <div className="relative w-[150px] h-[120px] mb-4">
-            {productImageUrl ? (
-                <img src={productImageUrl} alt="Produto" className="w-full h-full object-contain" />
-            ) : (
-                <div className="w-full h-full bg-transparent"></div>
-            )}
-        </div>
-        <h2 className="text-5xl md:text-6xl font-extrabold leading-tight mb-2 uppercase text-black">
+        {productImageUrl && (
+          <div className="relative w-[150px] h-[120px] mb-4">
+              <img src={productImageUrl} alt="Produto" className="w-full h-full object-contain" />
+          </div>
+        )}
+        <h2 className="text-5xl font-extrabold leading-tight mb-2 uppercase text-black">
           {description || "Descrição do Produto"}
         </h2>
         {subDescription && (
-            <p className="text-5xl font-semibold leading-tight mb-4 text-gray-700">{subDescription}</p>
+            <p className="text-4xl font-semibold leading-tight mb-4 text-gray-700">{subDescription}</p>
         )}
         
         <div className="flex items-start justify-center gap-1 my-4 text-black">
             <span className="text-5xl font-bold mt-4">R$</span>
-            <span className="text-8xl md:text-[150px] font-extrabold leading-none">
+            <span className="text-[150px] font-extrabold leading-none">
                 {integerPart}
             </span>
             <div className="flex flex-col items-start mt-4">
