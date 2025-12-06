@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Printer, Loader2 } from "lucide-react";
 import { useAuth, useFirestore, useUser, useDoc, useMemoFirebase } from "@/firebase";
 import { initiateAnonymousSignIn, setDocumentNonBlocking } from "@/firebase";
-import { doc, serverTimestamp } from "firebase/firestore";
+import { doc, serverTimestamp, deleteField } from "firebase/firestore";
 
 const templates: Template[] = [
   { id: "black-friday", name: "Black Friday", component: BlackFridayTemplate },
@@ -82,13 +82,32 @@ export default function Home() {
   const handleOfferChange = (newOfferData: Offer) => {
     setOffer(newOfferData);
     if (offerRef && user) {
-      // Save to Firestore non-blockingly
-      // We must include the userId to pass security rules for writes.
-      const dataToSave = {
-        ...newOfferData,
+      // Create a deep copy to avoid modifying the original object
+      const dataToSave: { [key: string]: any } = {
+        ...JSON.parse(JSON.stringify(newOfferData)),
         userId: user.uid,
         updatedAt: serverTimestamp(),
       };
+
+      // Firestore does not accept 'undefined'. We need to convert them.
+      // deleteField() is used to remove a field during an update.
+      // null is used to set a field to null.
+      if (dataToSave.logoUrl === undefined) {
+        dataToSave.logoUrl = deleteField();
+      }
+      if (dataToSave.productImageUrl === undefined) {
+        dataToSave.productImageUrl = deleteField();
+      }
+      if (dataToSave.headlineText === undefined) {
+        dataToSave.headlineText = deleteField();
+      }
+      if (dataToSave.discount === undefined) {
+        dataToSave.discount = deleteField();
+      }
+      if (dataToSave.unit === undefined) {
+        dataToSave.unit = deleteField();
+      }
+
       setDocumentNonBlocking(offerRef, dataToSave, { merge: true });
     }
   };
