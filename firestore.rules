@@ -108,9 +108,9 @@ service cloud.firestore {
      * @deny          (update) User 'user_xyz' trying to modify an offer where `resource.data.userId` is 'user_abc'.
      * @principle     Enforces document ownership for all operations using a denormalized 'userId' field within the document.
      */
-    match /offers/{offerId} {
-      allow read, write: if isSignedIn() && isOwner(request.resource.data.userId);
-      allow list: if false; // list is not used in this application
+     match /offers/{offerId} {
+      allow read, write: if isSignedIn() && request.auth.uid in offerId;
+      allow list: if false;
     }
   }
 }
