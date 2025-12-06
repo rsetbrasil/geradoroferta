@@ -11,11 +11,13 @@ export const blackFridayTemplateString = `
             <h3 class="font-bold uppercase text-yellow-400 text-center" style="font-size: calc(2.5rem * var(--headline-size-multiplier)); letter-spacing: 0.05em;">{{headlineText}}</h3>
             {{/if}}
         </div>
-        <div class="absolute right-4 top-1/2 -translate-y-1/2" data-logo-container></div>
+        <div class="absolute right-4 top-1/2 -translate-y-1/2">
+            <img src="{{logoUrl}}" alt="Logo" class="w-24 h-24 object-cover rounded-full" />
+        </div>
     </header>
     <div class="w-full h-1 bg-red-600"></div>
 
-    <main class="flex-1 flex flex-col items-center justify-center text-center p-4 bg-white">
+    <main class="flex-1 flex flex-col items-center justify-center text-center p-4 bg-white" style="padding-left: 10px; padding-right: 10px;">
         <h2 class="font-extrabold leading-tight mb-2 uppercase text-black" style="font-size: calc(3rem * var(--size-multiplier));">
             {{descriptionLine1}}
         </h2>
@@ -39,7 +41,7 @@ export const blackFridayTemplateString = `
         </div>
 
         {{#if discount}}
-             <p class="font-bold bg-black text-yellow-400 px-6 py-2 mb-4" style="font-size: calc(1.25rem * var(--discount-size-multiplier));">{{discount}}</p>
+             <p class="font-bold bg-black text-yellow-400 px-6 py-2 mb-8" style="font-size: calc(1.25rem * var(--discount-size-multiplier));">{{discount}}</p>
         {{/if}}
     </main>
 
