@@ -18,9 +18,14 @@ const interpolations = (offer: Offer) => {
   const formattedFromDateModern = (date: Date | undefined) => date ? format(date, 'dd.MM.yy', { locale: ptBR }) : '...';
   const formattedToDateModern = (date: Date | undefined) => date ? format(date, 'dd.MM.yy', { locale: ptBR }) : '...';
 
+  // Split description into two lines if it contains a line break
+  const descriptionParts = (offer.description || "Descrição do Produto").split('\n');
+  const mainDescription = descriptionParts[0];
+  const subDescriptionFromMain = descriptionParts.length > 1 ? descriptionParts.slice(1).join('\n') : '';
+
   return {
-    '{{description}}': offer.description || "Descrição do Produto",
-    '{{subDescription}}': offer.subDescription || "",
+    '{{description}}': mainDescription,
+    '{{subDescription}}': offer.subDescription || subDescriptionFromMain || "",
     '{{price}}': offer.price || "0,00",
     '{{discount}}': offer.discount || "",
     '{{unit}}': offer.unit || "UND",
@@ -44,9 +49,17 @@ const renderConditions = (html: string, offer: Offer) => {
     // Basic conditional rendering for if statements
     // This is very limited and only supports simple checks for property existence
     // e.g., {{#if headlineText}}...{{/if}}
-    return html.replace(/\{\{#if (\w+)\}\}([\s\S]*?)\{\{\/if\}\}/g, (match, key, content) => {
+     const descriptionParts = (offer.description || "Descrição do Produto").split('\n');
+     const subDescriptionFromMain = descriptionParts.length > 1 ? descriptionParts.slice(1).join('\n') : '';
+     const finalSubDescription = offer.subDescription || subDescriptionFromMain;
+
+    let processedHtml = html.replace(/\{\{#if (\w+)\}\}([\s\S]*?)\{\{\/if\}\}/g, (match, key, content) => {
+        if (key === 'subDescription') {
+            return finalSubDescription ? content : '';
+        }
         return offer[key as keyof Offer] ? content : '';
     });
+    return processedHtml;
 };
 
 const renderImages = (html: string, offer: Offer) => {
@@ -108,7 +121,7 @@ export const DynamicTemplateRenderer: React.FC<{ templateData: string, offer: Of
   // 3. Handle simple value interpolations
   const replacements = interpolations(offer);
   for (const [key, value] of Object.entries(replacements)) {
-      processedHtml = processedHtml.replace(new RegExp(key, 'g'), String(value));
+      processedHtml = processedHtml.replace(new RegExp(key.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'g'), String(value));
   }
 
   // 4. Handle dynamic styles

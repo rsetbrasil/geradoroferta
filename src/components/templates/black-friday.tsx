@@ -3,7 +3,7 @@
 // This file is a static data provider for the initial template seeding.
 // It exports a string of HTML with Handlebars-like syntax for dynamic rendering.
 export const blackFridayTemplateString = `
-<div class="font-body w-full h-full flex flex-col bg-white text-black relative">
+<div class="font-body w-full h-full flex flex-col bg-white text-black">
     <header class="bg-black text-white p-4 flex justify-between items-center">
         <div class="flex flex-col items-start justify-center">
             {{#if headlineText}}
@@ -14,8 +14,7 @@ export const blackFridayTemplateString = `
     </header>
     <div class="w-full h-1 bg-red-600"></div>
 
-    <main class="flex flex-col items-center justify-center text-center p-4 bg-white">
-        <div data-product-image-container></div>
+    <main class="flex-grow flex flex-col items-center justify-center text-center p-4 bg-white">
         <h2 class="font-extrabold leading-tight mb-2 uppercase text-black" style="font-size: calc(3rem * var(--size-multiplier));">
             {{description}}
         </h2>
@@ -24,11 +23,11 @@ export const blackFridayTemplateString = `
         {{/if}}
         
         <div class="flex items-center justify-center gap-2 my-4 text-black">
-            <span class="font-bold self-start" style="font-size: calc(2.5rem * var(--size-multiplier));">R$</span>
+            <span class="font-bold self-center" style="font-size: calc(2.5rem * var(--size-multiplier));">R$</span>
             <span class="font-extrabold leading-none" style="font-size: calc(10rem * var(--size-multiplier));">
                 {{integerPart}}
             </span>
-            <div class="flex flex-col items-start self-end">
+            <div class="flex flex-col items-start self-center">
                 <span class="font-bold" style="font-size: calc(2.5rem * var(--size-multiplier));">,{{decimalPart}}</span>
                 <span class="font-bold" style="font-size: calc(2rem * var(--size-multiplier));">{{unit}}</span>
             </div>
@@ -39,7 +38,7 @@ export const blackFridayTemplateString = `
         {{/if}}
     </main>
 
-    <footer class="bg-red-600 text-white text-center py-3 absolute bottom-0 left-0 right-0">
+    <footer class="bg-red-600 text-white text-center py-3">
         <h3 class="text-4xl font-extrabold tracking-wide">IMPERDÍVEL</h3>
     </footer>
 </div>
