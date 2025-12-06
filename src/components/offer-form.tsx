@@ -56,6 +56,7 @@ const offerSchema = z.object({
   fontSize: z.number().optional(),
   headlineFontSize: z.number().optional(),
   discountFontSize: z.number().optional(),
+  productId: z.string().optional(),
 });
 
 interface OfferFormProps {
@@ -140,22 +141,28 @@ export function OfferForm({ offer, onOfferChange, productList }: OfferFormProps)
     if (selectedProduct) {
         setValue("description", selectedProduct.name.replace(/ /g, '\\n'), { shouldValidate: true, shouldDirty: true });
         setValue("price", selectedProduct.price, { shouldValidate: true, shouldDirty: true });
+        setValue("productId", productId, { shouldValidate: true, shouldDirty: true });
         handleChange();
     }
   }
 
   const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let value = e.target.value.replace(/\D/g, ''); // Remove non-digits
-    if (!value) {
-      form.setValue('price', "0,00");
-      handleChange('price');
-      return;
-    }
-    value = value.padStart(3, '0');
-    const formattedValue = value.slice(0, -2) + ',' + value.slice(-2);
-    form.setValue('price', formattedValue);
-    handleChange('price');
+    const currentValue = e.target.value;
+    const digitsOnly = currentValue.replace(/\D/g, "");
+    
+    // Pad with leading zeros to have at least 3 digits (for cents)
+    const paddedValue = digitsOnly.padStart(3, '0');
+    
+    // Insert comma
+    const formattedValue = paddedValue.slice(0, -2) + ',' + paddedValue.slice(-2);
+    
+    form.setValue('price', formattedValue, { shouldValidate: true });
+    // Use requestAnimationFrame to avoid race conditions with state updates
+    requestAnimationFrame(() => {
+        handleChange('price');
+    });
   }
+
 
   return (
     <Card>
@@ -169,24 +176,33 @@ export function OfferForm({ offer, onOfferChange, productList }: OfferFormProps)
       <CardContent>
         <Form {...form}>
           <form className="space-y-6">
-             <FormItem>
-              <FormLabel>Selecionar Produto</FormLabel>
-              <Select onValueChange={handleProductSelect}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Escolha um produto da sua lista" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {productList.map((product) => (
-                    <SelectItem key={product.id} value={product.id}>
-                      {product.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-               <FormMessage />
-            </FormItem>
+            <FormField
+              control={form.control}
+              name="productId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Selecionar Produto</FormLabel>
+                  <Select onValueChange={(value) => {
+                    field.onChange(value);
+                    handleProductSelect(value);
+                  }} value={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Escolha um produto da sua lista" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {productList.map((product) => (
+                        <SelectItem key={product.id} value={product.id}>
+                          {product.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
             <FormField
               control={form.control}
@@ -482,5 +498,7 @@ export function OfferForm({ offer, onOfferChange, productList }: OfferFormProps)
     </Card>
   );
 }
+
+    
 
     

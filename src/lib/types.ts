@@ -16,6 +16,7 @@ export type Offer = {
   fontSize?: number;
   headlineFontSize?: number;
   discountFontSize?: number;
+  productId?: string;
 };
 
 export type OfferDocument = Omit<Offer, 'validity'> & {
@@ -40,3 +41,5 @@ export type Product = {
   name: string;
   price: string;
 };
+
+    
