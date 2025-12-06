@@ -1,3 +1,4 @@
+
 'use client';
 import type { Offer } from "@/lib/types";
 import { format } from 'date-fns';

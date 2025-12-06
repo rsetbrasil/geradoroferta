@@ -39,7 +39,7 @@ export const blackFridayTemplateString = `
         </div>
 
         {{#if discount}}
-                <p class="font-bold bg-black text-yellow-400 px-6 py-3" style="font-size: calc(1.5rem * var(--discount-size-multiplier));">{{discount}}</p>
+            <p class="font-bold bg-black text-yellow-400 px-6 py-3" style="font-size: calc(1.5rem * var(--discount-size-multiplier));">{{discount}}</p>
         {{/if}}
     </main>
 
