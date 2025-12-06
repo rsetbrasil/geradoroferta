@@ -35,6 +35,7 @@ const offerSchema = z.object({
     .min(10, "A descrição deve ter pelo menos 10 caracteres."),
   price: z.string().min(1, "O preço é obrigatório."),
   discount: z.string().optional(),
+  unit: z.string().optional(),
   validity: z.object({
     from: z.date().optional(),
     to: z.date().optional(),
@@ -157,7 +158,7 @@ export function OfferForm({ offer, onOfferChange }: OfferFormProps) {
                 )}
               />
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <FormField
                   control={form.control}
                   name="price"
@@ -182,6 +183,19 @@ export function OfferForm({ offer, onOfferChange }: OfferFormProps) {
                           placeholder="Ex: *LIMÃO & FRUTAS VERMELHAS*"
                           {...field}
                         />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="unit"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Unidade (Opcional)</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Ex: UND" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

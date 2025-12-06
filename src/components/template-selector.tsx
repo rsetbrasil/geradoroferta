@@ -26,6 +26,7 @@ export function TemplateSelector({
     description: "Nome do Produto",
     price: "8,00",
     discount: "50% OFF",
+    unit: "UND",
     validity: { from: undefined, to: undefined },
     logoUrl: undefined,
     productImageUrl: undefined,

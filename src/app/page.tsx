@@ -23,6 +23,7 @@ export default function Home() {
     description: "CERVEJA LONG NECK SOL 330ML",
     price: "8,00",
     discount: "*LIMÃO & FRUTAS VERMELHAS*",
+    unit: "UND",
     validity: {
       from: undefined,
       to: undefined,

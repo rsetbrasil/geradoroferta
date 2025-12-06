@@ -1,7 +1,7 @@
 import type { Offer } from "@/lib/types";
 
 export const BlackFridayTemplate: React.FC<{ offer: Offer }> = ({ offer }) => {
-  const { description, price, discount, logoUrl, productImageUrl } = offer;
+  const { description, price, discount, unit, logoUrl, productImageUrl } = offer;
   const [integerPart, decimalPart] = (price || "0,00").split(',');
 
   return (
@@ -71,7 +71,7 @@ export const BlackFridayTemplate: React.FC<{ offer: Offer }> = ({ offer }) => {
             </span>
             <div className="flex flex-col items-start mt-2">
                 <span className="text-4xl font-bold -mb-2">,{decimalPart}</span>
-                <span className="text-3xl font-bold">UND</span>
+                <span className="text-3xl font-bold">{unit || "UND"}</span>
             </div>
         </div>
 

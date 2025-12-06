@@ -2,6 +2,7 @@ export type Offer = {
   description: string;
   price: string;
   discount: string;
+  unit?: string;
   validity: {
     from: Date | undefined;
     to: Date | undefined;
