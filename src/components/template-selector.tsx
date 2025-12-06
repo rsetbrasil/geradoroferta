@@ -10,6 +10,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { DynamicTemplateRenderer } from "./templates/dynamic-renderer";
 
 interface TemplateSelectorProps {
   templates: Template[];
@@ -32,6 +33,8 @@ export function TemplateSelector({
     validity: { from: undefined, to: undefined },
     logoUrl: undefined,
     productImageUrl: undefined,
+    fontSize: 50,
+    headlineFontSize: 50
   });
 
   // Set initial date on client to avoid hydration errors
@@ -66,8 +69,8 @@ export function TemplateSelector({
               <div
                 className="pointer-events-none bg-white aspect-[210/297] w-full overflow-hidden"
               >
-                <div style={{ transform: "scale(0.25)", transformOrigin: "top left", width: '400%', height: '400%' }}>
-                  <template.component offer={mockOffer} />
+                 <div style={{ transform: "scale(0.25)", transformOrigin: "top left", width: '400%', height: '400%' }}>
+                  <DynamicTemplateRenderer templateData={template.layoutData} offer={mockOffer} />
                 </div>
               </div>
               <p className="text-sm font-medium text-center mt-2">{template.name}</p>

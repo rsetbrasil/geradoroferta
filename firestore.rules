@@ -11,16 +11,15 @@
  * Ownership is enforced differently based on the collection:
  *   - /users/{userId}: Ownership is determined by matching the authenticated user's ID with the document's ID in the path.
  *   - /offers/{offerId}: Ownership for reads is determined by the path, while writes are validated against a `userId` field in the document.
- *   - /templates/{templateId}: This collection currently has a schema issue preventing ownership rules. See the rule comments for details.
+ *   - /templates/{templateId}: Ownership is enforced using a 'userId' field in the document.
  *
  * Key Security Decisions:
  * - User Listing Disabled: To protect user privacy, it is not possible to list all documents in the /users collection.
  * - Strict Ownership: Users can only read, update, or delete content that they own.
  * - Prototyping Flexibility: These rules focus strictly on authorization (who can access what) and do not validate the specific shape or data types of documents. This allows for rapid iteration on the application's data model without needing to update security rules for every schema change.
- * - CRITICAL: The `/templates` collection is currently locked down because the 'Template' entity in the data model is missing a `userId` or `ownerId` field. This makes it impossible to securely determine ownership. The rules will deny all access until this field is added to the application's schema.
  *
  * Denormalization for Authorization:
- * The `/offers` collection demonstrates a key security pattern. By including a `userId` field directly on each offer document, we can write simple, fast, and secure rules that check for ownership without needing to perform costly lookups on other documents. This also enables secure queries, allowing users to list only their own offers.
+ * The `/offers` and `/templates` collections demonstrate a key security pattern. By including a `userId` field directly on each document, we can write simple, fast, and secure rules that check for ownership without needing to perform costly lookups on other documents. This also enables secure queries, allowing users to list only their own content.
  */
 rules_version = '2';
 service cloud.firestore {
@@ -83,18 +82,18 @@ service cloud.firestore {
     }
 
     /**
-     * @description   Stores offer templates.
+     * @description   Stores offer templates created by users.
      * @path          /templates/{templateId}
-     * @allow         (none) All operations are currently disallowed.
-     * @deny          (create) Any user attempting to create a template document.
-     * @principle     Fails-safe security. Access is denied because the data model cannot support the required security rule.
+     * @allow         (create) An authenticated user 'user_abc' creating a new template with `userId: 'user_abc'`.
+     * @deny          (update) User 'user_xyz' trying to modify a template where `resource.data.userId` is 'user_abc'.
+     * @principle     Enforces document ownership for all operations using a denormalized 'userId' field.
      */
     match /templates/{templateId} {
-      // CRITICAL: Cannot implement owner-only rules as required by the application logic ("only visible to the creator").
-      // The 'Template' entity is missing an 'ownerId' or 'userId' field in its schema.
-      // To prevent any user from reading or writing any other user's templates, all access is denied.
-      // TODO: Add an ownership field (e.g., 'userId') to the 'Template' entity in your application code, then update these rules to enforce ownership.
-      allow read, write: if false;
+      allow list: if isSignedIn();
+      allow get: if isSignedIn();
+      allow create: if isNewDocumentOwner();
+      allow update: if isExistingDocumentOwner() && isImmutable('userId');
+      allow delete: if isExistingDocumentOwner();
     }
 
     /**

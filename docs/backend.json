@@ -77,13 +77,18 @@
         "layoutData": {
           "type": "string",
           "description": "JSON data representing the layout and styling of the template."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to the User who created the template."
         }
       },
       "required": [
         "id",
         "name",
         "description",
-        "layoutData"
+        "layoutData",
+        "userId"
       ]
     },
     "User": {
@@ -205,6 +210,6 @@
         }
       }
     ],
-    "reasoning": "The Firestore structure is designed to ensure authorization independence, clarity, and scalability for the OfferPrint application.  Each collection is designed with a homogenous security posture and predictable schema.  User-owned data is stored in hierarchical paths, and collaborative data is modeled with membership maps.  To achieve Authorization Independence and support secure `list` operations (QAPs), the structure leverages path-based ownership for user-specific data and denormalization where needed. Specifically:\n\n*   **Users Collection:** Stores user profiles.\n*   **Templates Collection:** Stores offer templates.  Any user can create templates, but they are only visible to the creator.\n*   **Offers Collection:** Stores offers created by users. The `userId` is denormalized into each offer document, enabling secure listing and retrieval of a user's offers without requiring `get()` calls in security rules.\n*   **Products Collection:** Stores a global list of products. This data is public to all authenticated users to populate selection dropdowns.\n\nThis design ensures that security rules can be written based on the presence or absence of a user ID, without needing to fetch parent documents or implement complex filtering logic. This approach enables atomic operations, simplifies security rules, and makes debugging easier."
+    "reasoning": "The Firestore structure is designed to ensure authorization independence, clarity, and scalability for the OfferPrint application.  Each collection is designed with a homogenous security posture and predictable schema.  User-owned data is stored in hierarchical paths, and collaborative data is modeled with membership maps.  To achieve Authorization Independence and support secure `list` operations (QAPs), the structure leverages path-based ownership for user-specific data and denormalization where needed. Specifically:\n\n*   **Users Collection:** Stores user profiles.\n*   **Templates Collection:** Stores offer templates.  Any user can create templates, and they are only visible to the creator.\n*   **Offers Collection:** Stores offers created by users. The `userId` is denormalized into each offer document, enabling secure listing and retrieval of a user's offers without requiring `get()` calls in security rules.\n*   **Products Collection:** Stores a global list of products. This data is public to all authenticated users to populate selection dropdowns.\n\nThis design ensures that security rules can be written based on the presence or absence of a user ID, without needing to fetch parent documents or implement complex filtering logic. This approach enables atomic operations, simplifies security rules, and makes debugging easier."
   }
 }

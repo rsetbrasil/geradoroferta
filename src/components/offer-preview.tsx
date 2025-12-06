@@ -1,19 +1,20 @@
 "use client";
 
-import type { Offer, Template } from "@/lib/types";
+import type { Offer } from "@/lib/types";
+import { type ReactNode } from "react";
 
 interface OfferPreviewProps {
-  templateComponent: Template["component"];
   offer: Offer;
+  children: ReactNode;
 }
 
-export function OfferPreview({ templateComponent: TemplateComponent, offer }: OfferPreviewProps) {
+export function OfferPreview({ offer, children }: OfferPreviewProps) {
   return (
     <div
       id="print-area"
       className="flex w-full aspect-[210/297] bg-white rounded-lg shadow-lg border transition-all duration-300"
     >
-      <TemplateComponent offer={offer} />
+      {children}
     </div>
   );
 }

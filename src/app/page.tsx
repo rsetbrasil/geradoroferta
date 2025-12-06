@@ -1,35 +1,36 @@
 "use client";
 
 import { useState, useEffect, useMemo, useCallback } from "react";
+import ReactDOMServer from "react-dom/server";
 import type { Offer, Template, OfferDocument, Product } from "@/lib/types";
 import { OfferForm } from "@/components/offer-form";
 import { OfferPreview } from "@/components/offer-preview";
 import { TemplateSelector } from "@/components/template-selector";
 import { Header } from "@/components/header";
+import { BlackFridayTemplate } from "@/components/templates/black-friday";
 import { ClassicDealTemplate } from "@/components/templates/classic-deal";
 import { ModernSplashTemplate } from "@/components/templates/modern-splash";
-import { BlackFridayTemplate } from "@/components/templates/black-friday";
+import { DynamicTemplateRenderer } from "@/components/templates/dynamic-renderer";
 import { Button } from "@/components/ui/button";
 import { Printer, Loader2 } from "lucide-react";
 import { useAuth, useFirestore, useUser, useDoc, useCollection, useMemoFirebase } from "@/firebase";
-import { initiateAnonymousSignIn, setDocumentNonBlocking } from "@/firebase";
+import { initiateAnonymousSignIn, setDocumentNonBlocking, addDocumentNonBlocking } from "@/firebase";
 import { doc, serverTimestamp, collection } from "firebase/firestore";
 import { productList as staticProductList } from "@/lib/products";
 import debounce from 'lodash.debounce';
 
-const templates: Template[] = [
-  { id: "black-friday", name: "Black Friday", component: BlackFridayTemplate },
-  { id: "classic", name: "Oferta Clássica", component: ClassicDealTemplate },
-  { id: "modern", name: "Splash Moderno", component: ModernSplashTemplate },
+const DEFAULT_OFFER_ID = "singleton";
+
+const staticTemplates: Omit<Template, 'id' | 'userId'>[] = [
+  { name: "Black Friday", layoutData: ReactDOMServer.renderToString(<BlackFridayTemplate offer={{} as Offer} />) },
+  { name: "Oferta Clássica", layoutData: ReactDOMServer.renderToString(<ClassicDealTemplate offer={{} as Offer} />) },
+  { name: "Splash Moderno", layoutData: ReactDOMServer.renderToString(<ModernSplashTemplate offer={{} as Offer} />) },
 ];
 
-const DEFAULT_OFFER_ID = "singleton";
 
 export default function Home() {
   const [offer, setOffer] = useState<Offer | undefined>(undefined);
-  const [selectedTemplateId, setSelectedTemplateId] = useState<string>(
-    templates[0].id
-  );
+  const [selectedTemplateId, setSelectedTemplateId] = useState<string>('');
 
   const auth = useAuth();
   const firestore = useFirestore();
@@ -49,16 +50,36 @@ export default function Home() {
 
   const { data: productList, isLoading: areProductsLoading } = useCollection<Product>(productsRef);
 
-  // Seed products to firestore if collection is empty
+  const templatesRef = useMemoFirebase(() => {
+    if (!firestore) return null;
+    return collection(firestore, 'templates');
+  }, [firestore]);
+
+  const { data: templates, isLoading: areTemplatesLoading } = useCollection<Template>(templatesRef);
+
+   // Seed initial data (products and templates) if collections are empty
   useEffect(() => {
-    if (user && productsRef && !areProductsLoading && productList && productList.length === 0) {
+    if (user && firestore && !areProductsLoading && productList && productList.length === 0) {
       console.log("Product list is empty, seeding initial data...");
       staticProductList.forEach(product => {
         const productDocRef = doc(productsRef, product.id);
         setDocumentNonBlocking(productDocRef, product, { merge: true });
       });
     }
-  }, [user, productsRef, productList, areProductsLoading]);
+    if (user && firestore && !areTemplatesLoading && templates && templates.length === 0) {
+      console.log("Templates list is empty, seeding initial data...");
+      staticTemplates.forEach(template => {
+        addDocumentNonBlocking(templatesRef, { ...template, userId: user.uid });
+      });
+    }
+  }, [user, firestore, productList, areProductsLoading, templates, areTemplatesLoading, productsRef, templatesRef]);
+
+  // Set default selected template
+  useEffect(() => {
+    if (!selectedTemplateId && templates && templates.length > 0) {
+      setSelectedTemplateId(templates[0].id);
+    }
+  }, [templates, selectedTemplateId]);
 
   // Sign in user anonymously if not logged in
   useEffect(() => {
@@ -132,14 +153,16 @@ export default function Home() {
     debouncedSave(newOfferData);
   };
 
-  const selectedTemplate =
-    templates.find((t) => t.id === selectedTemplateId) || templates[0];
+  const selectedTemplate = useMemo(() => 
+    templates?.find((t) => t.id === selectedTemplateId),
+    [templates, selectedTemplateId]
+  );
 
   const handlePrint = () => {
     window.print();
   };
   
-  const isLoading = isUserLoading || !offer || areProductsLoading;
+  const isLoading = isUserLoading || !offer || areProductsLoading || areTemplatesLoading || !selectedTemplate;
 
   if (isLoading) {
     return (
@@ -161,7 +184,7 @@ export default function Home() {
               productList={productList || []}
             />
             <TemplateSelector
-              templates={templates}
+              templates={templates || []}
               selectedTemplateId={selectedTemplateId}
               onSelectTemplate={setSelectedTemplateId}
             />
@@ -171,9 +194,11 @@ export default function Home() {
             className="flex flex-col gap-4 sticky top-24"
           >
             <OfferPreview
-              templateComponent={selectedTemplate.component}
               offer={offer}
-            />
+            >
+                {selectedTemplate && <DynamicTemplateRenderer templateData={selectedTemplate.layoutData} offer={offer} />}
+            </OfferPreview>
+
             <Button
               onClick={handlePrint}
               className="w-full lg:w-auto self-end no-print"

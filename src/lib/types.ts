@@ -29,7 +29,9 @@ export type OfferDocument = Omit<Offer, 'validity'> & {
 export type Template = {
   id: string;
   name: string;
-  component: React.FC<{ offer: Offer }>;
+  layoutData: string;
+  userId?: string;
+  component?: React.FC<{ offer: Offer }>; // For mock/preview on client
 };
 
 export type Product = {
