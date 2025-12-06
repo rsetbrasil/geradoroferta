@@ -49,32 +49,36 @@ export default function Home() {
   
   // Load offer from Firestore or set initial state
   useEffect(() => {
-    if (!isOfferLoading && offerData) {
-      // Convert Firestore Timestamps to JS Dates
-      const fromDate = offerData.validity?.from ? (offerData.validity.from as any).toDate() : new Date();
-      const toDate = offerData.validity?.to ? (offerData.validity.to as any).toDate() : new Date();
-      toDate.setDate(fromDate.getDate() + 7);
-
-      setOffer({
-        ...offerData,
+    // Define the base initial offer state
+    const fromDate = new Date();
+    const toDate = new Date();
+    toDate.setDate(fromDate.getDate() + 7);
+    const initialOffer: Offer = {
+        headlineText: "SUPER OFERTA!",
+        description: "CERVEJA LONG NECK SOL 330ML",
+        price: "8,00",
+        discount: "*LIMÃO & FRUTAS VERMELHAS*",
+        unit: "UND",
         validity: { from: fromDate, to: toDate },
-      });
-    } else if (!isOfferLoading && !offerData && user) {
-        // No data in Firestore, set initial client-side state
-        const fromDate = new Date();
-        const toDate = new Date();
-        toDate.setDate(fromDate.getDate() + 7);
-        const initialOffer: Offer = {
-            headlineText: "SUPER OFERTA!",
-            description: "CERVEJA LONG NECK SOL 330ML",
-            price: "8,00",
-            discount: "*LIMÃO & FRUTAS VERMELHAS*",
-            unit: "UND",
-            validity: { from: fromDate, to: toDate },
-            logoUrl: undefined,
-            productImageUrl: undefined,
-        };
+        logoUrl: undefined,
+        productImageUrl: undefined,
+    };
+
+    if (!isOfferLoading && user) {
+      if (offerData) {
+        // If data exists in Firestore, merge it with the initial state
+        const fromDateDb = offerData.validity?.from ? (offerData.validity.from as any).toDate() : fromDate;
+        const toDateDb = offerData.validity?.to ? (offerData.validity.to as any).toDate() : toDate;
+
+        setOffer({
+          ...initialOffer, // Start with defaults
+          ...offerData,   // Override with Firestore data
+          validity: { from: fromDateDb, to: toDateDb },
+        });
+      } else {
+        // No data in Firestore, set the initial client-side state
         setOffer(initialOffer);
+      }
     }
   }, [offerData, isOfferLoading, user]);
 
@@ -88,23 +92,13 @@ export default function Home() {
         updatedAt: serverTimestamp(),
       };
 
-      // Firestore does not accept 'undefined'. We need to convert them to null.
-      if (dataToSave.logoUrl === undefined) {
-        dataToSave.logoUrl = null;
-      }
-      if (dataToSave.productImageUrl === undefined) {
-        dataToSave.productImageUrl = null;
-      }
-      if (dataToSave.headlineText === undefined) {
-        dataToSave.headlineText = null;
-      }
-      if (dataToSave.discount === undefined) {
-        dataToSave.discount = null;
-      }
-      if (dataToSave.unit === undefined) {
-        dataToSave.unit = null;
-      }
-
+      // Firestore does not accept 'undefined'. Convert to null.
+      Object.keys(dataToSave).forEach(key => {
+        if (dataToSave[key] === undefined) {
+          dataToSave[key] = null;
+        }
+      });
+      
       setDocumentNonBlocking(offerRef, dataToSave, { merge: true });
     }
   };
@@ -116,7 +110,7 @@ export default function Home() {
     window.print();
   };
   
-  const isLoading = isUserLoading || isOfferLoading || !offer;
+  const isLoading = isUserLoading || !offer;
 
   if (isLoading) {
     return (
