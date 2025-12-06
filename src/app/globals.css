@@ -109,4 +109,12 @@
   .text-black {
     color: #000 !important;
   }
+  .text-yellow-400 {
+    color: #facc15 !important;
+  }
+  .bg-white {
+    background-color: #fff !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
 }
