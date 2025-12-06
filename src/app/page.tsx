@@ -1,15 +1,14 @@
 "use client";
 
 import { useState, useEffect, useMemo, useCallback } from "react";
-import ReactDOMServer from "react-dom/server";
 import type { Offer, Template, OfferDocument, Product } from "@/lib/types";
 import { OfferForm } from "@/components/offer-form";
 import { OfferPreview } from "@/components/offer-preview";
 import { TemplateSelector } from "@/components/template-selector";
 import { Header } from "@/components/header";
-import { BlackFridayTemplate } from "@/components/templates/black-friday";
-import { ClassicDealTemplate } from "@/components/templates/classic-deal";
-import { ModernSplashTemplate } from "@/components/templates/modern-splash";
+import { blackFridayTemplateString } from "@/components/templates/black-friday";
+import { classicDealTemplateString } from "@/components/templates/classic-deal";
+import { modernSplashTemplateString } from "@/components/templates/modern-splash";
 import { DynamicTemplateRenderer } from "@/components/templates/dynamic-renderer";
 import { Button } from "@/components/ui/button";
 import { Printer, Loader2 } from "lucide-react";
@@ -22,9 +21,9 @@ import debounce from 'lodash.debounce';
 const DEFAULT_OFFER_ID = "singleton";
 
 const staticTemplates: Omit<Template, 'id' | 'userId'>[] = [
-  { name: "Black Friday", layoutData: ReactDOMServer.renderToString(<BlackFridayTemplate offer={{} as Offer} />) },
-  { name: "Oferta Clássica", layoutData: ReactDOMServer.renderToString(<ClassicDealTemplate offer={{} as Offer} />) },
-  { name: "Splash Moderno", layoutData: ReactDOMServer.renderToString(<ModernSplashTemplate offer={{} as Offer} />) },
+  { name: "Black Friday", layoutData: blackFridayTemplateString },
+  { name: "Oferta Clássica", layoutData: classicDealTemplateString },
+  { name: "Splash Moderno", layoutData: modernSplashTemplateString },
 ];
 
 
@@ -148,10 +147,10 @@ export default function Home() {
     [offerRef, user]
   );
 
-  const handleOfferChange = (newOfferData: Offer) => {
+  const handleOfferChange = useCallback((newOfferData: Offer) => {
     setOffer(newOfferData);
     debouncedSave(newOfferData);
-  };
+  }, [debouncedSave]);
 
   const selectedTemplate = useMemo(() => 
     templates?.find((t) => t.id === selectedTemplateId),

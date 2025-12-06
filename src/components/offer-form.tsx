@@ -73,7 +73,7 @@ export function OfferForm({ offer, onOfferChange, productList }: OfferFormProps)
     values: offer,
   });
 
-  const { watch, getValues, setValue, reset, formState } = form;
+  const { watch, getValues, setValue, reset } = form;
 
   useEffect(() => {
     // Reset the form if the initial offer data changes from the parent
@@ -82,7 +82,6 @@ export function OfferForm({ offer, onOfferChange, productList }: OfferFormProps)
 
   useEffect(() => {
     const subscription = watch((value) => {
-      // Direct call to onOfferChange, which will be debounced by the parent
       onOfferChange(value as Offer);
     });
     return () => subscription.unsubscribe();
@@ -178,6 +177,7 @@ export function OfferForm({ offer, onOfferChange, productList }: OfferFormProps)
                     <Input
                       placeholder="Ex: SUPER OFERTA!"
                       {...field}
+                      value={field.value ?? ''}
                     />
                   </FormControl>
                   <FormMessage />
@@ -248,6 +248,7 @@ export function OfferForm({ offer, onOfferChange, productList }: OfferFormProps)
                     <Input
                       placeholder="Ex: Leve 3, Pague 2"
                       {...field}
+                       value={field.value ?? ''}
                     />
                   </FormControl>
                   <FormMessage />
@@ -279,6 +280,7 @@ export function OfferForm({ offer, onOfferChange, productList }: OfferFormProps)
                       <Input
                         placeholder="Ex: *LIMÃO & FRUTAS VERMELHAS*"
                         {...field}
+                         value={field.value ?? ''}
                       />
                     </FormControl>
                     <FormMessage />
@@ -292,7 +294,7 @@ export function OfferForm({ offer, onOfferChange, productList }: OfferFormProps)
                   <FormItem>
                     <FormLabel>Unidade (Opcional)</FormLabel>
                     <FormControl>
-                      <Input placeholder="Ex: UND" {...field} />
+                      <Input placeholder="Ex: UND" {...field} value={field.value ?? ''} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
