@@ -144,6 +144,19 @@ export function OfferForm({ offer, onOfferChange, productList }: OfferFormProps)
     }
   }
 
+  const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let value = e.target.value.replace(/\D/g, ''); // Remove non-digits
+    if (!value) {
+      form.setValue('price', "0,00");
+      handleChange('price');
+      return;
+    }
+    value = value.padStart(3, '0');
+    const formattedValue = value.slice(0, -2) + ',' + value.slice(-2);
+    form.setValue('price', formattedValue);
+    handleChange('price');
+  }
+
   return (
     <Card>
       <CardHeader>
@@ -287,10 +300,7 @@ export function OfferForm({ offer, onOfferChange, productList }: OfferFormProps)
                   <FormItem>
                     <FormLabel>Preço</FormLabel>
                     <FormControl>
-                      <Input placeholder="Ex: 8,00" {...field}  onChange={e => {
-                        field.onChange(e);
-                        handleChange('price');
-                      }}/>
+                      <Input placeholder="Ex: 8,00" {...field}  onChange={handlePriceChange}/>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -472,3 +482,5 @@ export function OfferForm({ offer, onOfferChange, productList }: OfferFormProps)
     </Card>
   );
 }
+
+    
