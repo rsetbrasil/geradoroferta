@@ -35,7 +35,7 @@ export const BlackFridayTemplate: React.FC<{ offer: Offer }> = ({ offer }) => {
       <div className="w-full h-4 bg-red-600"></div>
       
       {/* Main Content */}
-      <div className="flex-grow flex flex-col items-center justify-center text-center p-4 z-10 bg-white">
+      <div className="flex-grow flex flex-col items-center justify-center text-center p-4 bg-white">
         {productImageUrl && (
           <div className="relative w-[150px] h-[120px] mb-4">
               <img src={productImageUrl} alt="Produto" className="w-full h-full object-contain" />
@@ -65,7 +65,7 @@ export const BlackFridayTemplate: React.FC<{ offer: Offer }> = ({ offer }) => {
       </div>
 
       {/* Footer */}
-      <div className="bg-red-600 text-white text-center py-3 z-10">
+      <div className="bg-red-600 text-white text-center py-3">
         <h3 className="text-4xl font-extrabold tracking-wide">IMPERDÍVEL</h3>
       </div>
     </div>
