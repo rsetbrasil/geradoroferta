@@ -47,8 +47,8 @@ service cloud.firestore {
      * Verifies ownership for an existing document.
      * CRITICAL: Ensures that update/delete operations only affect documents that actually exist.
      */
-    function isExistingDocumentOwner(ownerId) {
-      return isOwner(ownerId) && resource != null;
+    function isExistingDocumentOwner() {
+      return isSignedIn() && resource.data.userId == request.auth.uid;
     }
 
     /**
@@ -109,8 +109,11 @@ service cloud.firestore {
      * @principle     Enforces document ownership for all operations using a denormalized 'userId' field within the document.
      */
      match /offers/{offerId} {
-      allow read, write: if isSignedIn() && request.auth.uid in offerId;
+      allow get: if isSignedIn() && offerId.startsWith(request.auth.uid);
       allow list: if false;
+      allow create: if isNewDocumentOwner();
+      allow update: if isExistingDocumentOwner() && isImmutable('userId');
+      allow delete: if isExistingDocumentOwner();
     }
   }
 }
