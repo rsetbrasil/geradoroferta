@@ -109,14 +109,8 @@ service cloud.firestore {
      * @principle     Enforces document ownership for all operations using a denormalized 'userId' field within the document.
      */
     match /offers/{offerId} {
-      // For list queries to work securely, Firestore first applies the client-side query (e.g., .where('userId', '==', auth.uid))
-      // and then checks if each resulting document would pass the 'get' rule.
-      // This combination ensures users can only list and read their own offers.
-      allow get: if isOwner(resource.data.userId);
-      allow list: if isSignedIn();
-      allow create: if isNewDocumentOwner();
-      allow update: if isExistingDocumentOwner(resource.data.userId) && isImmutable('userId');
-      allow delete: if isExistingDocumentOwner(resource.data.userId);
+      allow read, write: if isSignedIn() && isOwner(request.resource.data.userId);
+      allow list: if false; // list is not used in this application
     }
   }
 }
