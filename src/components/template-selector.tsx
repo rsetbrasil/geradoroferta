@@ -1,6 +1,8 @@
+
 "use client";
 
-import type { Template } from "@/lib/types";
+import { useState, useEffect } from "react";
+import type { Offer, Template } from "@/lib/types";
 import {
   Card,
   CardContent,
@@ -16,18 +18,25 @@ interface TemplateSelectorProps {
   onSelectTemplate: (id: string) => void;
 }
 
-const mockOffer = {
-  description: "Product Name",
-  price: "100",
-  discount: "50%",
-  validity: { from: new Date(), to: new Date() },
-};
-
 export function TemplateSelector({
   templates,
   selectedTemplateId,
   onSelectTemplate,
 }: TemplateSelectorProps) {
+  const [mockOffer, setMockOffer] = useState<Offer>({
+    description: "Product Name",
+    price: "100",
+    discount: "50%",
+    validity: { from: undefined, to: undefined },
+  });
+
+  useEffect(() => {
+    const fromDate = new Date();
+    const toDate = new Date();
+    toDate.setDate(fromDate.getDate() + 7);
+    setMockOffer(prev => ({ ...prev, validity: { from: fromDate, to: toDate } }));
+  }, []);
+
   return (
     <Card>
       <CardHeader>
