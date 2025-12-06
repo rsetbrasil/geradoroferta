@@ -13,6 +13,7 @@ export type Offer = {
   logoUrl?: string;
   productImageUrl?: string;
   headlineText?: string;
+  fontSize?: number;
 };
 
 export type OfferDocument = Omit<Offer, 'validity'> & {

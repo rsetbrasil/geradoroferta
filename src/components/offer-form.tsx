@@ -28,6 +28,7 @@ import type { Offer } from "@/lib/types";
 import { Loader2, Sparkles, Upload } from "lucide-react";
 import { DateRangePicker } from "./date-range-picker";
 import type { DateRange } from "react-day-picker";
+import { Slider } from "./ui/slider";
 
 const offerSchema = z.object({
   headlineText: z.string().optional(),
@@ -44,6 +45,7 @@ const offerSchema = z.object({
   }),
   logoUrl: z.string().optional(),
   productImageUrl: z.string().optional(),
+  fontSize: z.number().optional(),
 });
 
 interface OfferFormProps {
@@ -237,6 +239,24 @@ export function OfferForm({ offer, onOfferChange }: OfferFormProps) {
                   )}
                 />
               </div>
+
+               <FormField
+                control={form.control}
+                name="fontSize"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Tamanho da Fonte ({field.value}%)</FormLabel>
+                    <FormControl>
+                        <Slider
+                            defaultValue={[field.value || 100]}
+                            onValueChange={(value) => field.onChange(value[0])}
+                            max={200}
+                            step={1}
+                        />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <FormItem>

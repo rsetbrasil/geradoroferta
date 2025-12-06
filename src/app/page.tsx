@@ -62,6 +62,7 @@ export default function Home() {
       discount: "*LIMÃO & FRUTAS VERMELHAS*",
       unit: "UND",
       validity: { from: fromDate, to: toDate },
+      fontSize: 100,
     };
 
     if (!isOfferLoading && user) {
