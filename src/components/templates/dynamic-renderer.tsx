@@ -54,28 +54,27 @@ const renderImages = (html: string, offer: Offer) => {
 
     // Logo Rendering
     if (offer.logoUrl) {
-         processedHtml = processedHtml.replace(/<div data-logo-container>[\s\S]*?<\/div>/g, `<img src="${offer.logoUrl}" alt="Logo" class="w-24 h-24 rounded-full object-cover border-4 border-black" />`);
+         processedHtml = processedHtml.replace(/<div data-logo-container><\/div>/g, `<img src="${offer.logoUrl}" alt="Logo" class="w-16 h-16 object-contain" />`);
     } else {
         // This is a very specific replacement for the default logo placeholder.
-        // In a real scenario, this would be more generic.
-        processedHtml = processedHtml.replace(/<div data-logo-container>[\s\S]*?<\/div>/g, `
-             <div class="w-24 h-24 bg-yellow-400 rounded-full flex flex-col items-center justify-center text-black border-4 border-black relative">
-              <span class="absolute top-1 text-[10px] font-bold">MR BEBIDAS</span>
-              <div class="w-10 h-10 rounded-full bg-red-600 flex items-center justify-center text-white font-bold text-lg relative">
-                <span class="absolute left-[-1px] top-1/2 -translate-y-1/2 text-black text-3xl font-extrabold" style="font-family: Arial, sans-serif;">M</span>
-                <span class="absolute right-[-1px] top-1/2 -translate-y-1/2 text-black text-3xl font-extrabold -scale-x-100" style="font-family: Arial, sans-serif;">R</span>
+        processedHtml = processedHtml.replace(/<div data-logo-container><\/div>/g, `
+             <div class="w-16 h-16 bg-yellow-400 rounded-full flex flex-col items-center justify-center text-black border-2 border-black relative text-[8px] font-bold">
+              <span>MR BEBIDAS</span>
+              <div class="w-8 h-8 rounded-full bg-red-600 flex items-center justify-center text-white text-lg font-bold relative">
+                <span class="absolute left-[-1px] top-1/2 -translate-y-1/2 text-black text-2xl font-extrabold" style="font-family: Arial, sans-serif;">M</span>
+                <span class="absolute right-[-1px] top-1/2 -translate-y-1/2 text-black text-2xl font-extrabold -scale-x-100" style="font-family: Arial, sans-serif;">R</span>
               </div>
-              <span class="absolute bottom-1 text-[10px] font-bold">DISTRIBUIDORA</span>
-              <div class="absolute inset-0 rounded-full border-2 border-black"></div>
+              <span>DISTRIBUIDORA</span>
+              <div class="absolute inset-0 rounded-full border border-black"></div>
             </div>
         `);
     }
 
     // Product Image Rendering
     if (offer.productImageUrl) {
-        processedHtml = processedHtml.replace(/<div data-product-image-container>[\s\S]*?<\/div>/g, `<div class="relative w-[150px] h-[120px] mb-4"><img src="${offer.productImageUrl}" alt="Produto" class="w-full h-full object-contain" /></div>`);
+        processedHtml = processedHtml.replace(/<div data-product-image-container><\/div>/g, `<div class="relative w-[150px] h-[120px] mb-4"><img src="${offer.productImageUrl}" alt="Produto" class="w-full h-full object-contain" /></div>`);
     } else {
-        processedHtml = processedHtml.replace(/<div data-product-image-container>[\s\S]*?<\/div>/g, '');
+        processedHtml = processedHtml.replace(/<div data-product-image-container><\/div>/g, '');
     }
 
 
