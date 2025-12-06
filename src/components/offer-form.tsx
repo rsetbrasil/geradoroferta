@@ -80,12 +80,14 @@ export function OfferForm({ offer, onOfferChange, productList }: OfferFormProps)
     reset(offer);
   }, [offer, reset]);
 
+  // Subscribe to form changes and notify the parent component
   useEffect(() => {
     const subscription = watch((value) => {
       onOfferChange(value as Offer);
     });
     return () => subscription.unsubscribe();
   }, [watch, onOfferChange]);
+
 
   const handleOptimize = () => {
     const currentDescription = getValues("description");
