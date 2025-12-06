@@ -9,7 +9,9 @@ export const BlackFridayTemplate: React.FC<{ offer: Offer }> = ({ offer }) => {
       {/* Header Section */}
       <div className="bg-black text-white p-4 flex justify-between items-center">
         <div className="flex flex-col items-start justify-center">
-          <h3 className="text-7xl font-bold uppercase text-yellow-400">{headlineText || "SUPER OFERTA!"}</h3>
+          {headlineText && (
+            <h3 className="text-7xl font-bold uppercase text-yellow-400">{headlineText}</h3>
+          )}
         </div>
         <div className="flex items-center space-x-2">
         {logoUrl ? (
@@ -62,7 +64,7 @@ export const BlackFridayTemplate: React.FC<{ offer: Offer }> = ({ offer }) => {
       </div>
 
       {/* Footer */}
-      <div className="bg-red-600 text-white text-center py-3 z-10 mt-auto">
+      <div className="bg-red-600 text-white text-center py-3 z-10">
         <h3 className="text-4xl font-extrabold tracking-wide">IMPERDÍVEL</h3>
       </div>
     </div>
