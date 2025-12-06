@@ -32,7 +32,7 @@ export const BlackFridayTemplate: React.FC<{ offer: Offer }> = ({ offer }) => {
       <div className="w-full h-4 bg-red-600"></div>
       
       {/* Main Content */}
-      <div className="flex-grow flex flex-col items-center justify-center text-center p-4 z-10 bg-white">
+      <div className="flex-grow flex flex-col items-center justify-start text-center p-4 pt-12 z-10 bg-white">
         <div className="relative w-[150px] h-[120px] mb-4">
             {productImageUrl ? (
                 <img src={productImageUrl} alt="Produto" className="w-full h-full object-contain" />
@@ -40,26 +40,26 @@ export const BlackFridayTemplate: React.FC<{ offer: Offer }> = ({ offer }) => {
                 <div className="w-full h-full bg-transparent"></div>
             )}
         </div>
-        <h2 className="text-6xl md:text-7xl font-extrabold leading-tight mb-2 uppercase text-black">
+        <h2 className="text-7xl md:text-8xl font-extrabold leading-tight mb-2 uppercase text-black">
           {description || "Descrição do Produto"}
         </h2>
         {subDescription && (
-            <p className="text-3xl font-semibold leading-tight mb-4 text-gray-700">{subDescription}</p>
+            <p className="text-4xl font-semibold leading-tight mb-4 text-gray-700">{subDescription}</p>
         )}
         
         <div className="flex items-start justify-center gap-1 my-4 text-black">
-            <span className="text-5xl font-bold mt-4">R$</span>
-            <span className="text-9xl md:text-[180px] font-extrabold leading-none">
+            <span className="text-6xl font-bold mt-4">R$</span>
+            <span className="text-9xl md:text-[200px] font-extrabold leading-none">
                 {integerPart}
             </span>
-            <div className="flex flex-col items-start mt-2">
-                <span className="text-5xl font-bold -mb-2">,{decimalPart}</span>
-                <span className="text-4xl font-bold">{unit || "UND"}</span>
+            <div className="flex flex-col items-start mt-4">
+                <span className="text-6xl font-bold -mb-2">,{decimalPart}</span>
+                <span className="text-5xl font-bold">{unit || "UND"}</span>
             </div>
         </div>
 
         {discount && (
-             <p className="font-bold text-2xl text-yellow-400 bg-black px-4 py-2">* {discount} *</p>
+             <p className="font-bold text-3xl text-yellow-400 bg-black px-6 py-3">* {discount} *</p>
         )}
       </div>
 
