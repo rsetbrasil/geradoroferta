@@ -12,7 +12,7 @@ import { BlackFridayTemplate } from "@/components/templates/black-friday";
 import { Button } from "@/components/ui/button";
 import { Printer, Loader2 } from "lucide-react";
 import { useAuth, useFirestore, useUser, useDoc, useCollection, useMemoFirebase } from "@/firebase";
-import { initiateAnonymousSignIn, setDocumentNonBlocking, addDocumentNonBlocking } from "@/firebase";
+import { initiateAnonymousSignIn, setDocumentNonBlocking } from "@/firebase";
 import { doc, serverTimestamp, collection } from "firebase/firestore";
 import { productList as staticProductList } from "@/lib/products";
 import debounce from 'lodash.debounce';
@@ -54,7 +54,6 @@ export default function Home() {
     if (user && productsRef && !areProductsLoading && productList && productList.length === 0) {
       console.log("Product list is empty, seeding initial data...");
       staticProductList.forEach(product => {
-        // Use the product's static ID for the document ID in Firestore
         const productDocRef = doc(productsRef, product.id);
         setDocumentNonBlocking(productDocRef, product, { merge: true });
       });
@@ -89,17 +88,15 @@ export default function Home() {
 
     if (!isOfferLoading && user) {
       if (offerData) {
-        // If data exists in Firestore, merge it
         const fromDateDb = offerData.validity?.from ? (offerData.validity.from as any).toDate() : fromDate;
         const toDateDb = offerData.validity?.to ? (offerData.validity.to as any).toDate() : toDate;
 
         setOffer({
-          ...initialOffer, // Start with base defaults
-          ...offerData,   // Override with Firestore data (including logoUrl and productImageUrl)
+          ...initialOffer,
+          ...offerData,
           validity: { from: fromDateDb, to: toDateDb },
         });
       } else {
-        // No data in Firestore, set the initial client-side state
         setOffer({
           ...initialOffer,
           logoUrl: undefined,
@@ -109,18 +106,15 @@ export default function Home() {
     }
   }, [offerData, isOfferLoading, user]);
 
-
-  const handleOfferChange = useCallback((newOfferData: Offer) => {
-    setOffer(newOfferData);
-
-    if (offerRef && user) {
+  const debouncedSave = useCallback(
+    debounce((newOfferData: Offer) => {
+      if (offerRef && user) {
         const dataToSave: { [key: string]: any } = {
           ...newOfferData,
           userId: user.uid,
           updatedAt: serverTimestamp(),
         };
 
-        // Firestore does not accept 'undefined'. Convert to null.
         Object.keys(dataToSave).forEach(key => {
           if (dataToSave[key] === undefined) {
             dataToSave[key] = null;
@@ -128,9 +122,15 @@ export default function Home() {
         });
         
         setDocumentNonBlocking(offerRef, dataToSave, { merge: true });
-    }
-  }, [offerRef, user]);
+      }
+    }, 500),
+    [offerRef, user]
+  );
 
+  const handleOfferChange = (newOfferData: Offer) => {
+    setOffer(newOfferData);
+    debouncedSave(newOfferData);
+  };
 
   const selectedTemplate =
     templates.find((t) => t.id === selectedTemplateId) || templates[0];

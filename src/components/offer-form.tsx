@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useTransition, useRef, useCallback } from "react";
-import { useForm, FormProvider, Controller } from "react-hook-form";
+import { useEffect, useTransition, useRef } from "react";
+import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import {
@@ -36,7 +36,6 @@ import { Loader2, Sparkles, Upload } from "lucide-react";
 import { DateRangePicker } from "./date-range-picker";
 import type { DateRange } from "react-day-picker";
 import { Slider } from "./ui/slider";
-import debounce from 'lodash.debounce';
 
 const offerSchema = z.object({
   headlineText: z.string().optional(),
@@ -74,14 +73,7 @@ export function OfferForm({ offer, onOfferChange, productList }: OfferFormProps)
     values: offer,
   });
 
-  const { watch, getValues, setValue, reset } = form;
-
-  // Use a ref to hold the debounced function
-  const debouncedOnOfferChange = useRef(
-    debounce((value: Offer) => {
-      onOfferChange(value);
-    }, 500)
-  ).current;
+  const { watch, getValues, setValue, reset, formState } = form;
 
   useEffect(() => {
     // Reset the form if the initial offer data changes from the parent
@@ -90,14 +82,11 @@ export function OfferForm({ offer, onOfferChange, productList }: OfferFormProps)
 
   useEffect(() => {
     const subscription = watch((value) => {
-      // Use the debounced function to notify the parent
-      debouncedOnOfferChange(value as Offer);
+      // Direct call to onOfferChange, which will be debounced by the parent
+      onOfferChange(value as Offer);
     });
-    return () => {
-      subscription.unsubscribe();
-      debouncedOnOfferChange.cancel(); // Clean up debounce on unmount
-    };
-  }, [watch, debouncedOnOfferChange]);
+    return () => subscription.unsubscribe();
+  }, [watch, onOfferChange]);
 
   const handleOptimize = () => {
     const currentDescription = getValues("description");
@@ -158,265 +147,263 @@ export function OfferForm({ offer, onOfferChange, productList }: OfferFormProps)
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <FormProvider {...form}>
-          <Form {...form}>
-            <form className="space-y-6">
-               <FormItem>
-                <FormLabel>Selecionar Produto</FormLabel>
-                <Select onValueChange={handleProductSelect}>
+        <Form {...form}>
+          <form className="space-y-6">
+             <FormItem>
+              <FormLabel>Selecionar Produto</FormLabel>
+              <Select onValueChange={handleProductSelect}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Escolha um produto da sua lista" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {productList.map((product) => (
+                    <SelectItem key={product.id} value={product.id}>
+                      {product.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+               <FormMessage />
+            </FormItem>
+
+            <FormField
+              control={form.control}
+              name="headlineText"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Título da Oferta (Opcional)</FormLabel>
                   <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Escolha um produto da sua lista" />
-                    </SelectTrigger>
+                    <Input
+                      placeholder="Ex: SUPER OFERTA!"
+                      {...field}
+                    />
                   </FormControl>
-                  <SelectContent>
-                    {productList.map((product) => (
-                      <SelectItem key={product.id} value={product.id}>
-                        {product.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                 <FormMessage />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="headlineFontSize"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Tamanho da Fonte do Título ({field.value}%)</FormLabel>
+                  <FormControl>
+                      <Slider
+                          value={[field.value || 100]}
+                          onValueChange={(value) => field.onChange(value[0])}
+                          max={200}
+                          step={1}
+                      />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Descrição do Produto</FormLabel>
+                  <FormControl>
+                    <div className="relative">
+                      <Textarea
+                        placeholder="Ex: Pão de Fermentação Natural Fresquinho"
+                        {...field}
+                        rows={4}
+                      />
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={handleOptimize}
+                        disabled={isPending}
+                        className="absolute bottom-2 right-2 gap-2"
+                      >
+                        {isPending ? (
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (
+                          <Sparkles className="h-4 w-4 text-accent" />
+                        )}
+                        Otimizar
+                      </Button>
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            
+            <FormField
+              control={form.control}
+              name="subDescription"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Subdescrição (Opcional)</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Ex: Leve 3, Pague 2"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <FormField
+                control={form.control}
+                name="price"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Preço</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Ex: 8,00" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="discount"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Detalhe (Opcional)</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Ex: *LIMÃO & FRUTAS VERMELHAS*"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="unit"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Unidade (Opcional)</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Ex: UND" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+             <FormField
+              control={form.control}
+              name="fontSize"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Tamanho da Fonte do Corpo ({field.value}%)</FormLabel>
+                  <FormControl>
+                      <Slider
+                          value={[field.value || 100]}
+                          onValueChange={(value) => field.onChange(value[0])}
+                          max={200}
+                          step={1}
+                      />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <FormItem>
+                <FormLabel>Logo da Empresa</FormLabel>
+                <div className="flex items-center gap-4">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => logoInputRef.current?.click()}
+                  >
+                    <Upload className="mr-2 h-4 w-4" />
+                    Carregar Logo
+                  </Button>
+                  <input
+                    type="file"
+                    ref={logoInputRef}
+                    onChange={(e) => handleImageUpload(e, "logoUrl")}
+                    accept="image/png, image/jpeg, image/svg+xml"
+                    className="hidden"
+                  />
+                  {watch("logoUrl") && (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() =>
+                        setValue("logoUrl", undefined, { shouldDirty: true })
+                      }
+                    >
+                      Remover
+                    </Button>
+                  )}
+                </div>
+                <FormMessage />
               </FormItem>
-
-              <FormField
-                control={form.control}
-                name="headlineText"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Título da Oferta (Opcional)</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Ex: SUPER OFERTA!"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="headlineFontSize"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Tamanho da Fonte do Título ({field.value}%)</FormLabel>
-                    <FormControl>
-                        <Slider
-                            value={[field.value || 100]}
-                            onValueChange={(value) => field.onChange(value[0])}
-                            max={200}
-                            step={1}
-                        />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="description"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Descrição do Produto</FormLabel>
-                    <FormControl>
-                      <div className="relative">
-                        <Textarea
-                          placeholder="Ex: Pão de Fermentação Natural Fresquinho"
-                          {...field}
-                          rows={4}
-                        />
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          onClick={handleOptimize}
-                          disabled={isPending}
-                          className="absolute bottom-2 right-2 gap-2"
-                        >
-                          {isPending ? (
-                            <Loader2 className="h-4 w-4 animate-spin" />
-                          ) : (
-                            <Sparkles className="h-4 w-4 text-accent" />
-                          )}
-                          Otimizar
-                        </Button>
-                      </div>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={form.control}
-                name="subDescription"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Subdescrição (Opcional)</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Ex: Leve 3, Pague 2"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <FormField
-                  control={form.control}
-                  name="price"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Preço</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Ex: 8,00" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="discount"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Detalhe (Opcional)</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Ex: *LIMÃO & FRUTAS VERMELHAS*"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="unit"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Unidade (Opcional)</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Ex: UND" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-
-               <FormField
-                control={form.control}
-                name="fontSize"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Tamanho da Fonte do Corpo ({field.value}%)</FormLabel>
-                    <FormControl>
-                        <Slider
-                            value={[field.value || 100]}
-                            onValueChange={(value) => field.onChange(value[0])}
-                            max={200}
-                            step={1}
-                        />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <FormItem>
-                  <FormLabel>Logo da Empresa</FormLabel>
-                  <div className="flex items-center gap-4">
+              <FormItem>
+                <FormLabel>Imagem do Produto</FormLabel>
+                <div className="flex items-center gap-4">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => productInputRef.current?.click()}
+                  >
+                    <Upload className="mr-2 h-4 w-4" />
+                    Carregar Imagem
+                  </Button>
+                  <input
+                    type="file"
+                    ref={productInputRef}
+                    onChange={(e) => handleImageUpload(e, "productImageUrl")}
+                    accept="image/png, image/jpeg, image/svg+xml"
+                    className="hidden"
+                  />
+                  {watch("productImageUrl") && (
                     <Button
                       type="button"
-                      variant="outline"
-                      onClick={() => logoInputRef.current?.click()}
+                      variant="ghost"
+                      size="sm"
+                      onClick={() =>
+                        setValue("productImageUrl", undefined, {
+                          shouldDirty: true,
+                        })
+                      }
                     >
-                      <Upload className="mr-2 h-4 w-4" />
-                      Carregar Logo
+                      Remover
                     </Button>
-                    <input
-                      type="file"
-                      ref={logoInputRef}
-                      onChange={(e) => handleImageUpload(e, "logoUrl")}
-                      accept="image/png, image/jpeg, image/svg+xml"
-                      className="hidden"
-                    />
-                    {watch("logoUrl") && (
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        onClick={() =>
-                          setValue("logoUrl", undefined, { shouldDirty: true })
-                        }
-                      >
-                        Remover
-                      </Button>
-                    )}
-                  </div>
-                  <FormMessage />
-                </FormItem>
-                <FormItem>
-                  <FormLabel>Imagem do Produto</FormLabel>
-                  <div className="flex items-center gap-4">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={() => productInputRef.current?.click()}
-                    >
-                      <Upload className="mr-2 h-4 w-4" />
-                      Carregar Imagem
-                    </Button>
-                    <input
-                      type="file"
-                      ref={productInputRef}
-                      onChange={(e) => handleImageUpload(e, "productImageUrl")}
-                      accept="image/png, image/jpeg, image/svg+xml"
-                      className="hidden"
-                    />
-                    {watch("productImageUrl") && (
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        onClick={() =>
-                          setValue("productImageUrl", undefined, {
-                            shouldDirty: true,
-                          })
-                        }
-                      >
-                        Remover
-                      </Button>
-                    )}
-                  </div>
-                  <FormMessage />
-                </FormItem>
-              </div>
+                  )}
+                </div>
+                <FormMessage />
+              </FormItem>
+            </div>
 
-              <Controller
-                control={form.control}
-                name="validity"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Período de Validade</FormLabel>
-                    <DateRangePicker
-                      date={field.value as DateRange}
-                      onDateChange={(range) => field.onChange(range)}
-                    />
-                  </FormItem>
-                )}
-              />
-            </form>
-          </Form>
-        </FormProvider>
+            <Controller
+              control={form.control}
+              name="validity"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Período de Validade</FormLabel>
+                  <DateRangePicker
+                    date={field.value as DateRange}
+                    onDateChange={(range) => field.onChange(range)}
+                  />
+                </FormItem>
+              )}
+            />
+          </form>
+        </Form>
       </CardContent>
     </Card>
   );
