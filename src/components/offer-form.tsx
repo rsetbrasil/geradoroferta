@@ -64,11 +64,6 @@ export function OfferForm({ offer, onOfferChange }: OfferFormProps) {
     });
     return () => subscription.unsubscribe();
   }, [watch, onOfferChange]);
-  
-  // When the offer prop updates from the outside, reset the form
-  useEffect(() => {
-    form.reset(offer);
-  }, [offer, form]);
 
   const handleOptimize = () => {
     const currentDescription = getValues("description");
