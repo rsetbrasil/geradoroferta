@@ -65,6 +65,7 @@ export default function Home() {
         const toDate = new Date();
         toDate.setDate(fromDate.getDate() + 7);
         const initialOffer: Offer = {
+            headlineText: "SUPER OFERTA!",
             description: "CERVEJA LONG NECK SOL 330ML",
             price: "8,00",
             discount: "*LIMÃO & FRUTAS VERMELHAS*",

@@ -30,6 +30,7 @@ import { DateRangePicker } from "./date-range-picker";
 import type { DateRange } from "react-day-picker";
 
 const offerSchema = z.object({
+  headlineText: z.string().optional(),
   description: z
     .string()
     .min(10, "A descrição deve ter pelo menos 10 caracteres."),
@@ -123,6 +124,22 @@ export function OfferForm({ offer, onOfferChange }: OfferFormProps) {
         <FormProvider {...form}>
           <Form {...form}>
             <form className="space-y-6">
+              <FormField
+                control={form.control}
+                name="headlineText"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Título da Oferta (Opcional)</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Ex: SUPER OFERTA!"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               <FormField
                 control={form.control}
                 name="description"

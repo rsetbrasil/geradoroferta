@@ -1,7 +1,7 @@
 import type { Offer } from "@/lib/types";
 
 export const BlackFridayTemplate: React.FC<{ offer: Offer }> = ({ offer }) => {
-  const { description, price, discount, unit, logoUrl, productImageUrl } = offer;
+  const { description, price, discount, unit, logoUrl, productImageUrl, headlineText } = offer;
   const [integerPart, decimalPart] = (price || "0,00").split(',');
 
   return (
@@ -9,14 +9,7 @@ export const BlackFridayTemplate: React.FC<{ offer: Offer }> = ({ offer }) => {
       {/* Header Section */}
       <div className="bg-black text-white p-4 flex justify-between items-center">
         <div className="flex flex-col items-start justify-center">
-          <h3 className="text-7xl font-bold uppercase text-yellow-400">Super Oferta!</h3>
-          <div className="relative w-[150px] h-[120px] mt-2">
-            {productImageUrl ? (
-                <img src={productImageUrl} alt="Produto" className="w-full h-full object-contain" />
-            ) : (
-                <div className="w-full h-full bg-black"></div>
-            )}
-          </div>
+          <h3 className="text-7xl font-bold uppercase text-yellow-400">{headlineText || "SUPER OFERTA!"}</h3>
         </div>
         <div className="flex items-center space-x-2">
         {logoUrl ? (
@@ -38,6 +31,13 @@ export const BlackFridayTemplate: React.FC<{ offer: Offer }> = ({ offer }) => {
       
       {/* Main Content */}
       <div className="flex-grow flex flex-col items-center justify-center text-center p-4 z-10 bg-white">
+        <div className="relative w-[150px] h-[120px] mb-4">
+            {productImageUrl ? (
+                <img src={productImageUrl} alt="Produto" className="w-full h-full object-contain" />
+            ) : (
+                <div className="w-full h-full bg-white"></div>
+            )}
+        </div>
         <h2 className="text-4xl md:text-5xl font-extrabold leading-tight mb-4 uppercase text-black">
           {description || "Descrição do Produto"}
         </h2>

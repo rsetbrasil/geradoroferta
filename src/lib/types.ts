@@ -11,6 +11,7 @@ export type Offer = {
   };
   logoUrl?: string;
   productImageUrl?: string;
+  headlineText?: string;
 };
 
 export type OfferDocument = Omit<Offer, 'validity'> & {
