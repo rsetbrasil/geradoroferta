@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { Offer, Template } from "@/lib/types";
 import { OfferForm } from "@/components/offer-form";
 import { OfferPreview } from "@/components/offer-preview";
@@ -22,13 +22,23 @@ export default function Home() {
     price: "99.99",
     discount: "25%",
     validity: {
-      from: new Date(),
-      to: new Date(new Date().setDate(new Date().getDate() + 7)),
+      from: undefined,
+      to: undefined,
     },
   });
   const [selectedTemplateId, setSelectedTemplateId] = useState<string>(
     templates[0].id
   );
+  
+  useEffect(() => {
+    setOffer(prevOffer => ({
+        ...prevOffer,
+        validity: {
+            from: new Date(),
+            to: new Date(new Date().setDate(new Date().getDate() + 7)),
+        }
+    }));
+  }, []);
 
   const handleOfferChange = (newOfferData: Offer) => {
     setOffer(newOfferData);
