@@ -42,7 +42,7 @@ const offerSchema = z.object({
   headlineText: z.string().optional(),
   description: z
     .string()
-    .min(10, "A descrição deve ter pelo menos 10 caracteres."),
+    .min(1, "A descrição é obrigatória."),
   subDescription: z.string().optional(),
   price: z.string().min(1, "O preço é obrigatório."),
   discount: z.string().optional(),
@@ -137,7 +137,7 @@ export function OfferForm({ offer, onOfferChange, productList }: OfferFormProps)
   const handleProductSelect = (productId: string) => {
     const selectedProduct = productList.find(p => p.id === productId);
     if (selectedProduct) {
-        setValue("description", selectedProduct.name, { shouldValidate: true, shouldDirty: true });
+        setValue("description", selectedProduct.name.replace(/ /g, '\\n'), { shouldValidate: true, shouldDirty: true });
         setValue("price", selectedProduct.price, { shouldValidate: true, shouldDirty: true });
         handleChange();
     }
@@ -154,7 +154,7 @@ export function OfferForm({ offer, onOfferChange, productList }: OfferFormProps)
       </CardHeader>
       <CardContent>
         <Form {...form}>
-          <form className="space-y-6" onChange={() => handleChange()}>
+          <form className="space-y-6">
              <FormItem>
               <FormLabel>Selecionar Produto</FormLabel>
               <Select onValueChange={handleProductSelect}>
@@ -185,6 +185,10 @@ export function OfferForm({ offer, onOfferChange, productList }: OfferFormProps)
                       placeholder="Ex: SUPER OFERTA!"
                       {...field}
                       value={field.value ?? ''}
+                      onChange={e => {
+                        field.onChange(e);
+                        handleChange('headlineText');
+                      }}
                     />
                   </FormControl>
                   <FormMessage />
@@ -225,6 +229,10 @@ export function OfferForm({ offer, onOfferChange, productList }: OfferFormProps)
                         placeholder="Ex: Pão de Fermentação Natural Fresquinho"
                         {...field}
                         rows={4}
+                         onChange={e => {
+                          field.onChange(e);
+                          handleChange('description');
+                        }}
                       />
                       <Button
                         type="button"
@@ -259,6 +267,10 @@ export function OfferForm({ offer, onOfferChange, productList }: OfferFormProps)
                       placeholder="Ex: Leve 3, Pague 2"
                       {...field}
                        value={field.value ?? ''}
+                       onChange={e => {
+                        field.onChange(e);
+                        handleChange('subDescription');
+                      }}
                     />
                   </FormControl>
                   <FormMessage />
@@ -274,7 +286,10 @@ export function OfferForm({ offer, onOfferChange, productList }: OfferFormProps)
                   <FormItem>
                     <FormLabel>Preço</FormLabel>
                     <FormControl>
-                      <Input placeholder="Ex: 8,00" {...field} />
+                      <Input placeholder="Ex: 8,00" {...field}  onChange={e => {
+                        field.onChange(e);
+                        handleChange('price');
+                      }}/>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -291,6 +306,10 @@ export function OfferForm({ offer, onOfferChange, productList }: OfferFormProps)
                         placeholder="Ex: *LIMÃO & FRUTAS VERMELHAS*"
                         {...field}
                          value={field.value ?? ''}
+                          onChange={e => {
+                          field.onChange(e);
+                          handleChange('discount');
+                        }}
                       />
                     </FormControl>
                     <FormMessage />
@@ -304,7 +323,10 @@ export function OfferForm({ offer, onOfferChange, productList }: OfferFormProps)
                   <FormItem>
                     <FormLabel>Unidade (Opcional)</FormLabel>
                     <FormControl>
-                      <Input placeholder="Ex: UND" {...field} value={field.value ?? ''} />
+                      <Input placeholder="Ex: UND" {...field} value={field.value ?? ''}  onChange={e => {
+                        field.onChange(e);
+                        handleChange('unit');
+                      }}/>
                     </FormControl>
                     <FormMessage />
                   </FormItem>

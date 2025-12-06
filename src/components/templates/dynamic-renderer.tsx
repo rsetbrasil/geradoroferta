@@ -18,14 +18,17 @@ const interpolations = (offer: Offer) => {
   const formattedFromDateModern = (date: Date | undefined) => date ? format(date, 'dd.MM.yy', { locale: ptBR }) : '...';
   const formattedToDateModern = (date: Date | undefined) => date ? format(date, 'dd.MM.yy', { locale: ptBR }) : '...';
 
-  // Split description into two lines if it contains a line break
-  const descriptionParts = (offer.description || "Descrição do Produto").split('\n');
-  const mainDescription = descriptionParts[0];
-  const subDescriptionFromMain = descriptionParts.length > 1 ? descriptionParts.slice(1).join('\n') : '';
+  // Split description into two lines
+  const descriptionParts = (offer.description || "Descrição do Produto").split('\\n');
+  const descriptionLine1 = descriptionParts[0] || "";
+  const descriptionLine2 = descriptionParts[1] || "";
+
 
   return {
-    '{{description}}': mainDescription,
-    '{{subDescription}}': offer.subDescription || subDescriptionFromMain || "",
+    '{{description}}': offer.description || "Descrição do Produto",
+    '{{descriptionLine1}}': descriptionLine1,
+    '{{descriptionLine2}}': descriptionLine2,
+    '{{subDescription}}': offer.subDescription || "",
     '{{price}}': offer.price || "0,00",
     '{{discount}}': offer.discount || "",
     '{{unit}}': offer.unit || "UND",
@@ -49,13 +52,16 @@ const renderConditions = (html: string, offer: Offer) => {
     // Basic conditional rendering for if statements
     // This is very limited and only supports simple checks for property existence
     // e.g., {{#if headlineText}}...{{/if}}
-     const descriptionParts = (offer.description || "Descrição do Produto").split('\n');
-     const subDescriptionFromMain = descriptionParts.length > 1 ? descriptionParts.slice(1).join('\n') : '';
-     const finalSubDescription = offer.subDescription || subDescriptionFromMain;
+    const descriptionParts = (offer.description || "").split('\\n');
+    const descriptionLine2 = descriptionParts[1] || "";
+    const finalSubDescription = offer.subDescription;
 
     let processedHtml = html.replace(/\{\{#if (\w+)\}\}([\s\S]*?)\{\{\/if\}\}/g, (match, key, content) => {
         if (key === 'subDescription') {
             return finalSubDescription ? content : '';
+        }
+        if (key === 'descriptionLine2') {
+            return descriptionLine2 ? content : '';
         }
         return offer[key as keyof Offer] ? content : '';
     });

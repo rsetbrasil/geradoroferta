@@ -16,14 +16,18 @@ export const blackFridayTemplateString = `
 
     <main class="flex-1 flex flex-col items-center justify-center text-center p-4 bg-white">
         <h2 class="font-extrabold leading-tight mb-2 uppercase text-black" style="font-size: calc(3rem * var(--size-multiplier));">
-            {{description}}
+            {{descriptionLine1}}
         </h2>
+        {{#if descriptionLine2}}
+            <h2 class="font-extrabold leading-tight mb-2 uppercase text-black" style="font-size: calc(3rem * var(--size-multiplier));">{{descriptionLine2}}</h2>
+        {{/if}}
+        
         {{#if subDescription}}
             <p class="font-semibold leading-tight mb-4 text-gray-700" style="font-size: calc(2rem * var(--size-multiplier));">{{subDescription}}</p>
         {{/if}}
         
         <div class="flex items-center justify-center gap-2 my-4 text-black">
-            <span class="font-bold self-center" style="font-size: calc(2.5rem * var(--size-multiplier));">R$</span>
+            <span class="font-bold self-start" style="font-size: calc(2.5rem * var(--size-multiplier));">R$</span>
             <span class="font-extrabold leading-none" style="font-size: calc(10rem * var(--size-multiplier));">
                 {{integerPart}}
             </span>
