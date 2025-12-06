@@ -7,6 +7,7 @@ export type Offer = {
     to: Date | undefined;
   };
   logoUrl?: string;
+  productImageUrl?: string;
 };
 
 export type Template = {

@@ -28,6 +28,7 @@ export default function Home() {
       to: undefined,
     },
     logoUrl: undefined,
+    productImageUrl: undefined,
   });
   const [selectedTemplateId, setSelectedTemplateId] = useState<string>(
     templates[0].id

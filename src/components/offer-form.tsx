@@ -40,6 +40,7 @@ const offerSchema = z.object({
     to: z.date().optional(),
   }),
   logoUrl: z.string().optional(),
+  productImageUrl: z.string().optional(),
 });
 
 interface OfferFormProps {
@@ -51,6 +52,7 @@ export function OfferForm({ offer, onOfferChange }: OfferFormProps) {
   const { toast } = useToast();
   const [isPending, startTransition] = useTransition();
   const logoInputRef = useRef<HTMLInputElement>(null);
+  const productInputRef = useRef<HTMLInputElement>(null);
 
   const form = useForm<Offer>({
     resolver: zodResolver(offerSchema),
@@ -93,12 +95,15 @@ export function OfferForm({ offer, onOfferChange }: OfferFormProps) {
     });
   };
 
-  const handleLogoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    field: "logoUrl" | "productImageUrl"
+  ) => {
     const file = event.target.files?.[0];
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setValue("logoUrl", reader.result as string, { shouldDirty: true });
+        setValue(field, reader.result as string, { shouldDirty: true });
       };
       reader.readAsDataURL(file);
     }
@@ -173,48 +178,99 @@ export function OfferForm({ offer, onOfferChange }: OfferFormProps) {
                     <FormItem>
                       <FormLabel>Detalhe (Opcional)</FormLabel>
                       <FormControl>
-                        <Input placeholder="Ex: *LIMÃO & FRUTAS VERMELHAS*" {...field} />
+                        <Input
+                          placeholder="Ex: *LIMÃO & FRUTAS VERMELHAS*"
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
               </div>
-              
-              <FormItem>
-                <FormLabel>Logo da Empresa</FormLabel>
-                <div className="flex items-center gap-4">
-                    <Button type="button" variant="outline" onClick={() => logoInputRef.current?.click()}>
-                        <Upload className="mr-2 h-4 w-4" />
-                        Carregar Logo
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <FormItem>
+                  <FormLabel>Logo da Empresa</FormLabel>
+                  <div className="flex items-center gap-4">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => logoInputRef.current?.click()}
+                    >
+                      <Upload className="mr-2 h-4 w-4" />
+                      Carregar Logo
                     </Button>
                     <input
-                        type="file"
-                        ref={logoInputRef}
-                        onChange={handleLogoUpload}
-                        accept="image/png, image/jpeg, image/svg+xml"
-                        className="hidden"
+                      type="file"
+                      ref={logoInputRef}
+                      onChange={(e) => handleImageUpload(e, "logoUrl")}
+                      accept="image/png, image/jpeg, image/svg+xml"
+                      className="hidden"
                     />
-                     {watch("logoUrl") && (
-                        <Button type="button" variant="ghost" size="sm" onClick={() => setValue("logoUrl", undefined, { shouldDirty: true })}>
-                            Remover
-                        </Button>
+                    {watch("logoUrl") && (
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() =>
+                          setValue("logoUrl", undefined, { shouldDirty: true })
+                        }
+                      >
+                        Remover
+                      </Button>
                     )}
-                </div>
-                <FormMessage />
-              </FormItem>
+                  </div>
+                  <FormMessage />
+                </FormItem>
+                <FormItem>
+                  <FormLabel>Imagem do Produto</FormLabel>
+                  <div className="flex items-center gap-4">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => productInputRef.current?.click()}
+                    >
+                      <Upload className="mr-2 h-4 w-4" />
+                      Carregar Imagem
+                    </Button>
+                    <input
+                      type="file"
+                      ref={productInputRef}
+                      onChange={(e) => handleImageUpload(e, "productImageUrl")}
+                      accept="image/png, image/jpeg, image/svg+xml"
+                      className="hidden"
+                    />
+                    {watch("productImageUrl") && (
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() =>
+                          setValue("productImageUrl", undefined, {
+                            shouldDirty: true,
+                          })
+                        }
+                      >
+                        Remover
+                      </Button>
+                    )}
+                  </div>
+                  <FormMessage />
+                </FormItem>
+              </div>
 
               <Controller
                 control={form.control}
                 name="validity"
                 render={({ field }) => (
-                    <FormItem>
-                        <FormLabel>Período de Validade</FormLabel>
-                        <DateRangePicker 
-                            date={field.value as DateRange}
-                            onDateChange={(range) => field.onChange(range)}
-                        />
-                    </FormItem>
+                  <FormItem>
+                    <FormLabel>Período de Validade</FormLabel>
+                    <DateRangePicker
+                      date={field.value as DateRange}
+                      onDateChange={(range) => field.onChange(range)}
+                    />
+                  </FormItem>
                 )}
               />
             </form>
