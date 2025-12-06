@@ -142,5 +142,5 @@ export const DynamicTemplateRenderer: React.FC<{ templateData: string, offer: Of
   // 4. Handle dynamic styles
   processedHtml = renderStyles(processedHtml, offer);
 
-  return <div dangerouslySetInnerHTML={{ __html: processedHtml }} />;
+  return <div className="h-full" dangerouslySetInnerHTML={{ __html: processedHtml }} />;
 };
