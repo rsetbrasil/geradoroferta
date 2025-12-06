@@ -10,7 +10,7 @@
  * The data is organized into three flat, top-level collections: /users, /templates, and /offers.
  * Ownership is enforced differently based on the collection:
  *   - /users/{userId}: Ownership is determined by matching the authenticated user's ID with the document's ID in the path.
- *   - /offers/{offerId}: Ownership is determined by a denormalized `userId` field stored within each offer document.
+ *   - /offers/{offerId}: Ownership for reads is determined by the path, while writes are validated against a `userId` field in the document.
  *   - /templates/{templateId}: This collection currently has a schema issue preventing ownership rules. See the rule comments for details.
  *
  * Key Security Decisions:
@@ -105,11 +105,15 @@ service cloud.firestore {
      * @principle     Enforces document ownership for all operations using a denormalized 'userId' field within the document.
      */
      match /offers/{offerId} {
-      allow get: if isExistingDocumentOwner();
-      allow list: if false; // Explicitly deny list for now, can be enabled with queries later.
-      allow create: if isNewDocumentOwner();
-      allow update: if isExistingDocumentOwner() && isImmutable('userId');
-      allow delete: if isExistingDocumentOwner();
+        // Read access is determined by the document path, not its content.
+        // This rule allows a user to read a document if its ID contains their UID.
+        allow get: if isSignedIn() && offerId.split(request.auth.uid).size() == 2;
+        allow list: if false; // Explicitly deny list for now.
+
+        // Write access is determined by the content of the document being written.
+        allow create: if isNewDocumentOwner();
+        allow update: if isExistingDocumentOwner() && isImmutable('userId');
+        allow delete: if isExistingDocumentOwner();
     }
   }
 }
