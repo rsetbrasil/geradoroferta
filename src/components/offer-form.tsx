@@ -19,12 +19,20 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { getOptimizedDescription } from "@/lib/actions";
-import type { Offer } from "@/lib/types";
+import type { Offer, Product } from "@/lib/types";
+import { productList } from "@/lib/products";
 import { Loader2, Sparkles, Upload } from "lucide-react";
 import { DateRangePicker } from "./date-range-picker";
 import type { DateRange } from "react-day-picker";
@@ -114,6 +122,14 @@ export function OfferForm({ offer, onOfferChange }: OfferFormProps) {
       reader.readAsDataURL(file);
     }
   };
+  
+  const handleProductSelect = (productId: string) => {
+    const selectedProduct = productList.find(p => p.id === productId);
+    if (selectedProduct) {
+        setValue("description", selectedProduct.name, { shouldValidate: true, shouldDirty: true });
+        setValue("price", selectedProduct.price, { shouldValidate: true, shouldDirty: true });
+    }
+  }
 
   return (
     <Card>
@@ -128,6 +144,25 @@ export function OfferForm({ offer, onOfferChange }: OfferFormProps) {
         <FormProvider {...form}>
           <Form {...form}>
             <form className="space-y-6">
+               <FormItem>
+                <FormLabel>Selecionar Produto</FormLabel>
+                <Select onValueChange={handleProductSelect}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Escolha um produto da sua lista" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {productList.map((product) => (
+                      <SelectItem key={product.id} value={product.id}>
+                        {product.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                 <FormMessage />
+              </FormItem>
+
               <FormField
                 control={form.control}
                 name="headlineText"

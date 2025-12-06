@@ -31,3 +31,9 @@ export type Template = {
   name: string;
   component: React.FC<{ offer: Offer }>;
 };
+
+export type Product = {
+  id: string;
+  name: string;
+  price: string;
+};
