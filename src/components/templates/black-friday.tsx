@@ -40,7 +40,7 @@ export const BlackFridayTemplate: React.FC<{ offer: Offer }> = ({ offer }) => {
                 <div className="w-full h-full bg-transparent"></div>
             )}
         </div>
-        <h2 className="text-8xl md:text-9xl font-extrabold leading-tight mb-2 uppercase text-black">
+        <h2 className="text-5xl md:text-6xl font-extrabold leading-tight mb-2 uppercase text-black">
           {description || "Descrição do Produto"}
         </h2>
         {subDescription && (
@@ -48,13 +48,13 @@ export const BlackFridayTemplate: React.FC<{ offer: Offer }> = ({ offer }) => {
         )}
         
         <div className="flex items-start justify-center gap-1 my-4 text-black">
-            <span className="text-6xl font-bold mt-4">R$</span>
-            <span className="text-9xl md:text-[200px] font-extrabold leading-none">
+            <span className="text-5xl font-bold mt-4">R$</span>
+            <span className="text-8xl md:text-[150px] font-extrabold leading-none">
                 {integerPart}
             </span>
             <div className="flex flex-col items-start mt-4">
-                <span className="text-6xl font-bold -mb-2">,{decimalPart}</span>
-                <span className="text-5xl font-bold">{unit || "UND"}</span>
+                <span className="text-5xl font-bold -mb-2">,{decimalPart}</span>
+                <span className="text-4xl font-bold">{unit || "UND"}</span>
             </div>
         </div>
 
@@ -64,7 +64,7 @@ export const BlackFridayTemplate: React.FC<{ offer: Offer }> = ({ offer }) => {
       </div>
 
       {/* Footer */}
-      <div className="bg-red-600 text-white text-center py-3 z-10 mt-auto">
+      <div className="bg-red-600 text-white text-center py-3 z-10">
         <h3 className="text-4xl font-extrabold tracking-wide">IMPERDÍVEL</h3>
       </div>
     </div>
