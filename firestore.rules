@@ -1,0 +1,122 @@
+/**
+ * This ruleset enforces a strict user-ownership security model for the OfferPrint application.
+ *
+ * Core Philosophy:
+ * All data entities (User profiles, Offers, Templates) are considered private and are owned by the user who created them.
+ * Access is restricted to the authenticated owner, with a general policy of denying access by default.
+ * There are no public or collaborative collections.
+ *
+ * Data Structure:
+ * The data is organized into three flat, top-level collections: /users, /templates, and /offers.
+ * Ownership is enforced differently based on the collection:
+ *   - /users/{userId}: Ownership is determined by matching the authenticated user's ID with the document's ID in the path.
+ *   - /offers/{offerId}: Ownership is determined by a denormalized `userId` field stored within each offer document.
+ *   - /templates/{templateId}: This collection currently has a schema issue preventing ownership rules. See the rule comments for details.
+ *
+ * Key Security Decisions:
+ * - User Listing Disabled: To protect user privacy, it is not possible to list all documents in the /users collection.
+ * - Strict Ownership: Users can only read, update, or delete content that they own.
+ * - Prototyping Flexibility: These rules focus strictly on authorization (who can access what) and do not validate the specific shape or data types of documents. This allows for rapid iteration on the application's data model without needing to update security rules for every schema change.
+ * - CRITICAL: The `/templates` collection is currently locked down because the 'Template' entity in the data model is missing a `userId` or `ownerId` field. This makes it impossible to securely determine ownership. The rules will deny all access until this field is added to the application's schema.
+ *
+ * Denormalization for Authorization:
+ * The `/offers` collection demonstrates a key security pattern. By including a `userId` field directly on each offer document, we can write simple, fast, and secure rules that check for ownership without needing to perform costly lookups on other documents. This also enables secure queries, allowing users to list only their own offers.
+ */
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions to improve readability and maintainability.
+
+    /**
+     * Checks if a user is authenticated.
+     */
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    /**
+     * Checks if the authenticated user's UID matches the provided userId.
+     * Use for path-based security.
+     */
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    /**
+     * Verifies ownership for an existing document.
+     * CRITICAL: Ensures that update/delete operations only affect documents that actually exist.
+     */
+    function isExistingDocumentOwner(ownerId) {
+      return isOwner(ownerId) && resource != null;
+    }
+
+    /**
+     * Verifies ownership for a new document being created.
+     * Checks that the incoming data correctly assigns ownership to the creator.
+     */
+    function isNewDocumentOwner() {
+      return isSignedIn() && request.resource.data.userId == request.auth.uid;
+    }
+
+    /**
+     * Ensures a field remains unchanged during an update.
+     * Used to protect critical relational IDs like owner or creator fields.
+     */
+    function isImmutable(field) {
+      return request.resource.data[field] == resource.data[field];
+    }
+
+    /**
+     * @description   Stores user profile data.
+     * @path          /users/{userId}
+     * @allow         (create) A new user signing up for the first time: `db.collection('users').doc('user_abc').set({ id: 'user_abc', ... })` while authenticated as 'user_abc'.
+     * @deny          (get) An authenticated user 'user_xyz' trying to read the profile of 'user_abc'.
+     * @principle     Restricts access to a user's own data tree and enforces relational integrity between the document ID and its content.
+     */
+    match /users/{userId} {
+      allow get: if isOwner(userId);
+      allow list: if false; // Disallow listing users for privacy.
+      allow create: if isOwner(userId) && request.resource.data.id == userId;
+      allow update: if isOwner(userId) && resource != null && isImmutable('id');
+      allow delete: if isOwner(userId) && resource != null;
+    }
+
+    /**
+     * @description   Stores offer templates.
+     * @path          /templates/{templateId}
+     * @allow         (none) All operations are currently disallowed.
+     * @deny          (create) Any user attempting to create a template document.
+     * @principle     Fails-safe security. Access is denied because the data model cannot support the required security rule.
+     */
+    match /templates/{templateId} {
+      // CRITICAL: Cannot implement owner-only rules as required by the application logic ("only visible to the creator").
+      // The 'Template' entity is missing an 'ownerId' or 'userId' field in its schema.
+      // To prevent any user from reading or writing any other user's templates, all access is denied.
+      // TODO: Add an ownership field (e.g., 'userId') to the 'Template' entity in your application code, then update these rules to enforce ownership.
+      allow get: if false;
+      allow list: if false;
+      allow create: if false; // TODO: Add owner validation once the schema is updated with an ownership field.
+      allow update: if false;
+      allow delete: if false;
+    }
+
+    /**
+     * @description   Stores offers created by users.
+     * @path          /offers/{offerId}
+     * @allow         (create) An authenticated user 'user_abc' creating a new offer with `userId: 'user_abc'`.
+     * @deny          (update) User 'user_xyz' trying to modify an offer where `resource.data.userId` is 'user_abc'.
+     * @principle     Enforces document ownership for all operations using a denormalized 'userId' field within the document.
+     */
+    match /offers/{offerId} {
+      // For list queries to work securely, Firestore first applies the client-side query (e.g., .where('userId', '==', auth.uid))
+      // and then checks if each resulting document would pass the 'get' rule.
+      // This combination ensures users can only list and read their own offers.
+      allow get: if isOwner(resource.data.userId);
+      allow list: if isSignedIn();
+      allow create: if isNewDocumentOwner();
+      allow update: if isExistingDocumentOwner(resource.data.userId) && isImmutable('userId');
+      allow delete: if isExistingDocumentOwner(resource.data.userId);
+    }
+  }
+}

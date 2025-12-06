@@ -1,0 +1,175 @@
+{
+  "entities": {
+    "Offer": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Offer",
+      "type": "object",
+      "description": "Represents an offer created within the OfferPrint application.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Offer entity."
+        },
+        "productDescription": {
+          "type": "string",
+          "description": "Detailed description of the product or service being offered."
+        },
+        "price": {
+          "type": "number",
+          "description": "The original price of the product or service."
+        },
+        "discount": {
+          "type": "number",
+          "description": "The discount amount applied to the product or service, can be a percentage or fixed amount."
+        },
+        "validityStart": {
+          "type": "string",
+          "description": "The start date and time when the offer becomes valid.",
+          "format": "date-time"
+        },
+        "validityEnd": {
+          "type": "string",
+          "description": "The end date and time when the offer expires.",
+          "format": "date-time"
+        },
+        "templateId": {
+          "type": "string",
+          "description": "Reference to the Template used for this offer. (Relationship: Template 1:N Offer)"
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to the User who created the offer. (Relationship: User 1:N Offer)"
+        },
+        "aiSuggestion": {
+          "type": "string",
+          "description": "AI suggestions to increase customer engagement."
+        }
+      },
+      "required": [
+        "id",
+        "productDescription",
+        "price",
+        "discount",
+        "validityStart",
+        "validityEnd",
+        "templateId",
+        "userId"
+      ]
+    },
+    "Template": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Template",
+      "type": "object",
+      "description": "Represents a print template that can be used for offers.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Template entity."
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the template."
+        },
+        "description": {
+          "type": "string",
+          "description": "Description of the template."
+        },
+        "layoutData": {
+          "type": "string",
+          "description": "JSON data representing the layout and styling of the template."
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "description",
+        "layoutData"
+      ]
+    },
+    "User": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "User",
+      "type": "object",
+      "description": "Represents a user of the OfferPrint application.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the User entity."
+        },
+        "username": {
+          "type": "string",
+          "description": "Username of the user."
+        },
+        "email": {
+          "type": "string",
+          "description": "Email address of the user.",
+          "format": "email"
+        }
+      },
+      "required": [
+        "id",
+        "username",
+        "email"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/users/{userId}",
+        "definition": {
+          "entityName": "User",
+          "schema": {
+            "$ref": "#/backend/entities/User"
+          },
+          "description": "Stores user profiles.  Offers easy lookup by userId.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier for the user."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/templates/{templateId}",
+        "definition": {
+          "entityName": "Template",
+          "schema": {
+            "$ref": "#/backend/entities/Template"
+          },
+          "description": "Stores offer templates.  Any user can create templates, but they are only visible to the creator.",
+          "params": [
+            {
+              "name": "templateId",
+              "description": "The unique identifier for the template."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/offers/{offerId}",
+        "definition": {
+          "entityName": "Offer",
+          "schema": {
+            "$ref": "#/backend/entities/Offer"
+          },
+          "description": "Stores offers created by users. Includes denormalized 'userId' for authorization independence.",
+          "params": [
+            {
+              "name": "offerId",
+              "description": "The unique identifier for the offer."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "The Firestore structure is designed to ensure authorization independence, clarity, and scalability for the OfferPrint application.  Each collection is designed with a homogenous security posture and predictable schema.  User-owned data is stored in hierarchical paths, and collaborative data is modeled with membership maps.  To achieve Authorization Independence and support secure `list` operations (QAPs), the structure leverages path-based ownership for user-specific data and denormalization where needed. Specifically:\n\n*   **Users Collection:** Stores user profiles.\n*   **Templates Collection:** Stores offer templates.  Any user can create templates, but they are only visible to the creator.\n*   **Offers Collection:** Stores offers created by users. The `userId` is denormalized into each offer document, enabling secure listing and retrieval of a user's offers without requiring `get()` calls in security rules.\n\nThis design ensures that security rules can be written based on the presence or absence of a user ID, without needing to fetch parent documents or implement complex filtering logic. This approach enables atomic operations, simplifies security rules, and makes debugging easier."
+  }
+}
