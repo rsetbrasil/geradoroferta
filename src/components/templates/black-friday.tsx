@@ -6,17 +6,15 @@ export const BlackFridayTemplate: React.FC<{ offer: Offer }> = ({ offer }) => {
 
   return (
     <div className="font-body w-full h-full flex flex-col bg-white text-black relative">
-      <div className="bg-yellow-400 text-black text-center p-2">
-        <h3 className="text-2xl font-bold uppercase">Super Oferta!</h3>
-      </div>
       {/* Header Section */}
       <div className="bg-black text-white p-4 flex justify-between items-center">
-        <div className="flex items-center">
-          <div className="relative w-[150px] h-[120px]">
-            {productImageUrl && (
-                 <img src={productImageUrl} alt="Produto" className="w-full h-full object-contain" />
-            )}
-          </div>
+        <div className="flex flex-col items-center justify-center text-center">
+            <h3 className="text-2xl font-bold uppercase text-yellow-400">Super Oferta!</h3>
+            <div className="relative w-[150px] h-[120px] mt-2">
+                {productImageUrl && (
+                    <img src={productImageUrl} alt="Produto" className="w-full h-full object-contain" />
+                )}
+            </div>
         </div>
         <div className="flex items-center space-x-2">
         {logoUrl ? (
