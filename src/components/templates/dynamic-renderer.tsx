@@ -14,7 +14,7 @@ const interpolations = (offer: Offer) => {
   const [integerPart, decimalPart] = (offer.price || "0,00").split(',');
   const sizeMultiplier = (offer.fontSize || 100) / 100;
   const headlineSizeMultiplier = (offer.headlineFontSize || 100) / 100;
-  const discountSizeMultiplier = (offer.discountFontSize || 100) / 100;
+  const discountSizeMultiplier = (offer.discountFontSize || 60) / 100;
   const formattedFromDate = (date: Date | undefined) => date ? format(date, 'dd/MM/yyyy', { locale: ptBR }) : 'N/A';
   const formattedToDate = (date: Date | undefined) => date ? format(date, 'dd/MM/yyyy', { locale: ptBR }) : 'N/A';
   const formattedFromDateModern = (date: Date | undefined) => date ? format(date, 'dd.MM.yy', { locale: ptBR }) : '...';
@@ -135,5 +135,5 @@ export const DynamicTemplateRenderer: React.FC<{ templateData: string, offer: Of
   // 4. Handle dynamic styles
   processedHtml = renderStyles(processedHtml, offer);
 
-  return <div className="h-full" dangerouslySetInnerHTML={{ __html: processedHtml }} />;
+  return <div dangerouslySetInnerHTML={{ __html: processedHtml }} />;
 };
