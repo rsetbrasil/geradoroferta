@@ -94,11 +94,7 @@ service cloud.firestore {
       // The 'Template' entity is missing an 'ownerId' or 'userId' field in its schema.
       // To prevent any user from reading or writing any other user's templates, all access is denied.
       // TODO: Add an ownership field (e.g., 'userId') to the 'Template' entity in your application code, then update these rules to enforce ownership.
-      allow get: if false;
-      allow list: if false;
-      allow create: if false; // TODO: Add owner validation once the schema is updated with an ownership field.
-      allow update: if false;
-      allow delete: if false;
+      allow read, write: if false;
     }
 
     /**
@@ -109,8 +105,7 @@ service cloud.firestore {
      * @principle     Enforces document ownership for all operations using a denormalized 'userId' field within the document.
      */
      match /offers/{offerId} {
-      allow get: if isSignedIn() && offerId.startsWith(request.auth.uid);
-      allow list: if false;
+      allow read: if isSignedIn() && offerId.startsWith(request.auth.uid);
       allow create: if isNewDocumentOwner();
       allow update: if isExistingDocumentOwner() && isImmutable('userId');
       allow delete: if isExistingDocumentOwner();
