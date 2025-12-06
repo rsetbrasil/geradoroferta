@@ -17,7 +17,7 @@ export const BlackFridayTemplate: React.FC<{ offer: Offer }> = ({ offer }) => {
             <svg xmlns="http://www.w3.org/2000/svg" width="150" height="120" viewBox="0 0 48 48" fill="none" className="absolute -top-4 -left-8">
               <path d="M12.9688 12.3333L10.3125 33H38.25L40.9062 12.3333H12.9688Z" stroke="#B0B0B0" strokeWidth="2" strokeLinejoin="round"/>
               <path d="M10.3125 33H4.5C4.5 33 4.5 31.6667 6.5625 30.3333" stroke="#B0B0B0" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              <path d="M38.25 33H44.0625C44.0625 33 44.0625 31.6667 42 30.3333" stroke="#B0B0B0" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M38.25 33H44.0625C44.0625 33 44.0625 31.6667 42 30.3333" stroke="#B0BOBO" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
               <path d="M15.0234 18.1667H33.5391" stroke="#B0B0B0" strokeWidth="2" strokeLinecap="round"/>
               <path d="M14 24.3333H34.5625" stroke="#B0B0B0" strokeWidth="2" strokeLinecap="round"/>
               <path d="M7.625 33L6.5625 38.3333H42L41.5312 33" stroke="#B0B0B0" strokeWidth="2" strokeLinejoin="round"/>
@@ -53,12 +53,12 @@ export const BlackFridayTemplate: React.FC<{ offer: Offer }> = ({ offer }) => {
       <div className="w-full h-4 bg-red-600"></div>
       
       {/* Main Content */}
-      <div className="flex-grow flex flex-col items-center justify-center text-center p-4 z-10 bg-black">
-        <h2 className="text-4xl md:text-5xl font-extrabold leading-tight mb-4 uppercase text-white">
+      <div className="flex-grow flex flex-col items-center justify-center text-center p-4 z-10 bg-white">
+        <h2 className="text-4xl md:text-5xl font-extrabold leading-tight mb-4 uppercase text-black">
           {description || "Descrição do Produto"}
         </h2>
         
-        <div className="flex items-start justify-center gap-1 mb-2 text-white">
+        <div className="flex items-start justify-center gap-1 mb-2 text-black">
             <span className="text-4xl font-bold mt-4">R$</span>
             <span className="text-9xl md:text-[160px] font-extrabold leading-none">
                 {integerPart}
