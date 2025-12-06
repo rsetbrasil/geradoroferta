@@ -10,7 +10,7 @@ export const BlackFridayTemplate: React.FC<{ offer: Offer }> = ({ offer }) => {
         <h3 className="text-2xl font-bold uppercase">Super Oferta!</h3>
       </div>
       {/* Header Section */}
-      <div className="bg-white text-black p-4 flex justify-between items-center">
+      <div className="bg-black text-white p-4 flex justify-between items-center">
         <div className="flex items-center">
           <div className="relative w-[150px] h-[120px]">
             {productImageUrl && (
