@@ -4,17 +4,17 @@
 // It exports a string of HTML with Handlebars-like syntax for dynamic rendering.
 export const blackFridayTemplateString = `
 <div class="font-body w-full h-full flex flex-col bg-white text-black">
-    <div class="bg-black text-white p-4 flex justify-between items-center">
+    <header class="bg-black text-white p-4 flex justify-between items-center">
         <div class="flex flex-col items-start justify-center">
             {{#if headlineText}}
             <h3 class="font-bold uppercase text-yellow-400" style="font-size: calc(2.5rem * var(--headline-size-multiplier));">{{headlineText}}</h3>
             {{/if}}
         </div>
         <div data-logo-container></div>
-    </div>
+    </header>
     <div class="w-full h-1 bg-red-600"></div>
 
-    <div class="flex-grow flex flex-col items-center justify-center text-center p-4 bg-white">
+    <main class="flex-grow flex flex-col items-center justify-center text-center p-4 bg-white">
         <div data-product-image-container></div>
         <h2 class="font-extrabold leading-tight mb-2 uppercase text-black" style="font-size: calc(3rem * var(--size-multiplier));">
             {{description}}
@@ -37,10 +37,10 @@ export const blackFridayTemplateString = `
         {{#if discount}}
                 <p class="font-bold bg-black text-yellow-400 px-6 py-3" style="font-size: calc(1.5rem * var(--size-multiplier));">{{discount}}</p>
         {{/if}}
-    </div>
+    </main>
 
-    <div class="bg-red-600 text-white text-center py-3">
+    <footer class="bg-red-600 text-white text-center py-3">
         <h3 class="text-4xl font-extrabold tracking-wide">IMPERDÍVEL</h3>
-    </div>
+    </footer>
 </div>
 `;
