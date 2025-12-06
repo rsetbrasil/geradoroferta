@@ -12,7 +12,7 @@ export function OfferPreview({ offer, children }: OfferPreviewProps) {
   return (
     <div
       id="print-area"
-      className="w-full aspect-[210/297] bg-white rounded-lg shadow-lg border transition-all duration-300"
+      className="w-full aspect-[210/297] bg-white rounded-lg shadow-lg border transition-all duration-300 h-full"
     >
       {children}
     </div>
