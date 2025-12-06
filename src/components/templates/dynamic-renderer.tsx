@@ -53,7 +53,7 @@ const renderConditions = (html: string, offer: Offer) => {
     // This is very limited and only supports simple checks for property existence
     // e.g., {{#if headlineText}}...{{/if}}
     const descriptionParts = (offer.description || "").split('\\n');
-    const descriptionLine2 = descriptionParts[1] || "";
+    const descriptionLine2 = descriptionParts.length > 1 && descriptionParts[1].trim() !== '' ? descriptionParts[1] : null;
     const finalSubDescription = offer.subDescription;
 
     let processedHtml = html.replace(/\{\{#if (\w+)\}\}([\s\S]*?)\{\{\/if\}\}/g, (match, key, content) => {
@@ -133,5 +133,5 @@ export const DynamicTemplateRenderer: React.FC<{ templateData: string, offer: Of
   // 4. Handle dynamic styles
   processedHtml = renderStyles(processedHtml, offer);
 
-  return <div dangerouslySetInnerHTML={{ __html: processedHtml }} />;
+  return <div className="h-full" dangerouslySetInnerHTML={{ __html: processedHtml }} />;
 };
