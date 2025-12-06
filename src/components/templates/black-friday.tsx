@@ -76,7 +76,7 @@ export const BlackFridayTemplate: React.FC<{ offer: Offer }> = ({ offer }) => {
         </div>
 
         {discount && (
-             <p className="font-bold text-xl text-yellow-400">* {discount} *</p>
+             <p className="font-bold text-xl text-yellow-400 bg-black px-2 py-1">* {discount} *</p>
         )}
       </div>
 
