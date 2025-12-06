@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import type { Offer, Template, OfferDocument } from "@/lib/types";
 import { OfferForm } from "@/components/offer-form";
 import { OfferPreview } from "@/components/offer-preview";
@@ -28,6 +28,7 @@ export default function Home() {
   const [selectedTemplateId, setSelectedTemplateId] = useState<string>(
     templates[0].id
   );
+  const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const auth = useAuth();
   const firestore = useFirestore();
@@ -91,23 +92,40 @@ export default function Home() {
 
   const handleOfferChange = (newOfferData: Offer) => {
     setOffer(newOfferData);
-    if (offerRef && user) {
-      const dataToSave: { [key: string]: any } = {
-        ...newOfferData,
-        userId: user.uid,
-        updatedAt: serverTimestamp(),
-      };
-
-      // Firestore does not accept 'undefined'. Convert to null.
-      Object.keys(dataToSave).forEach(key => {
-        if (dataToSave[key] === undefined) {
-          dataToSave[key] = null;
-        }
-      });
-      
-      setDocumentNonBlocking(offerRef, dataToSave, { merge: true });
-    }
   };
+
+  // Debounce Firestore writes
+  useEffect(() => {
+    if (offer && offerRef && user) {
+      if (debounceTimeoutRef.current) {
+        clearTimeout(debounceTimeoutRef.current);
+      }
+      
+      debounceTimeoutRef.current = setTimeout(() => {
+        const dataToSave: { [key: string]: any } = {
+          ...offer,
+          userId: user.uid,
+          updatedAt: serverTimestamp(),
+        };
+
+        // Firestore does not accept 'undefined'. Convert to null.
+        Object.keys(dataToSave).forEach(key => {
+          if (dataToSave[key] === undefined) {
+            dataToSave[key] = null;
+          }
+        });
+        
+        setDocumentNonBlocking(offerRef, dataToSave, { merge: true });
+      }, 500); // 500ms debounce delay
+    }
+
+    return () => {
+      if (debounceTimeoutRef.current) {
+        clearTimeout(debounceTimeoutRef.current);
+      }
+    };
+  }, [offer, offerRef, user]);
+
 
   const selectedTemplate =
     templates.find((t) => t.id === selectedTemplateId) || templates[0];
