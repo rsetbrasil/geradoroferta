@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect, useMemo, useRef, useCallback } from "react";
-import type { Offer, Template, OfferDocument } from "@/lib/types";
+import { useState, useEffect, useMemo, useCallback } from "react";
+import type { Offer, Template, OfferDocument, Product } from "@/lib/types";
 import { OfferForm } from "@/components/offer-form";
 import { OfferPreview } from "@/components/offer-preview";
 import { TemplateSelector } from "@/components/template-selector";
@@ -11,9 +11,11 @@ import { ModernSplashTemplate } from "@/components/templates/modern-splash";
 import { BlackFridayTemplate } from "@/components/templates/black-friday";
 import { Button } from "@/components/ui/button";
 import { Printer, Loader2 } from "lucide-react";
-import { useAuth, useFirestore, useUser, useDoc, useMemoFirebase } from "@/firebase";
-import { initiateAnonymousSignIn, setDocumentNonBlocking } from "@/firebase";
-import { doc, serverTimestamp } from "firebase/firestore";
+import { useAuth, useFirestore, useUser, useDoc, useCollection, useMemoFirebase } from "@/firebase";
+import { initiateAnonymousSignIn, setDocumentNonBlocking, addDocumentNonBlocking } from "@/firebase";
+import { doc, serverTimestamp, collection } from "firebase/firestore";
+import { productList as staticProductList } from "@/lib/products";
+import debounce from 'lodash.debounce';
 
 const templates: Template[] = [
   { id: "black-friday", name: "Black Friday", component: BlackFridayTemplate },
@@ -39,6 +41,25 @@ export default function Home() {
   }, [firestore, user]);
 
   const { data: offerData, isLoading: isOfferLoading } = useDoc<OfferDocument>(offerRef);
+
+  const productsRef = useMemoFirebase(() => {
+    if (!firestore) return null;
+    return collection(firestore, 'products');
+  }, [firestore]);
+
+  const { data: productList, isLoading: areProductsLoading } = useCollection<Product>(productsRef);
+
+  // Seed products to firestore if collection is empty
+  useEffect(() => {
+    if (user && productsRef && !areProductsLoading && productList && productList.length === 0) {
+      console.log("Product list is empty, seeding initial data...");
+      staticProductList.forEach(product => {
+        // Use the product's static ID for the document ID in Firestore
+        const productDocRef = doc(productsRef, product.id);
+        setDocumentNonBlocking(productDocRef, product, { merge: true });
+      });
+    }
+  }, [user, productsRef, productList, areProductsLoading]);
 
   // Sign in user anonymously if not logged in
   useEffect(() => {
@@ -118,7 +139,7 @@ export default function Home() {
     window.print();
   };
   
-  const isLoading = isUserLoading || !offer;
+  const isLoading = isUserLoading || !offer || areProductsLoading;
 
   if (isLoading) {
     return (
@@ -134,7 +155,11 @@ export default function Home() {
       <main className="flex-1 container mx-auto p-4 sm:p-6 lg:p-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
           <div className="no-print flex flex-col gap-8">
-            <OfferForm offer={offer} onOfferChange={handleOfferChange} />
+            <OfferForm 
+              offer={offer} 
+              onOfferChange={handleOfferChange}
+              productList={productList || []}
+            />
             <TemplateSelector
               templates={templates}
               selectedTemplateId={selectedTemplateId}

@@ -115,5 +115,17 @@ service cloud.firestore {
         allow update: if isExistingDocumentOwner() && isImmutable('userId');
         allow delete: if isExistingDocumentOwner();
     }
+    
+    /**
+     * @description   Stores the global product list.
+     * @path          /products/{productId}
+     * @allow         (read) Any authenticated user can read the product list.
+     * @allow         (write) Any authenticated user can create, update, or delete products.
+     * @principle     This collection is treated as public but write-managed.
+     */
+    match /products/{productId} {
+      allow read: if isSignedIn();
+      allow write: if isSignedIn(); // Allows any authenticated user to manage products
+    }
   }
 }

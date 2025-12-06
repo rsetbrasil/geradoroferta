@@ -32,7 +32,6 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { getOptimizedDescription } from "@/lib/actions";
 import type { Offer, Product } from "@/lib/types";
-import { productList } from "@/lib/products";
 import { Loader2, Sparkles, Upload } from "lucide-react";
 import { DateRangePicker } from "./date-range-picker";
 import type { DateRange } from "react-day-picker";
@@ -61,9 +60,10 @@ const offerSchema = z.object({
 interface OfferFormProps {
   offer: Offer;
   onOfferChange: (offer: Offer) => void;
+  productList: Product[];
 }
 
-export function OfferForm({ offer, onOfferChange }: OfferFormProps) {
+export function OfferForm({ offer, onOfferChange, productList }: OfferFormProps) {
   const { toast } = useToast();
   const [isPending, startTransition] = useTransition();
   const logoInputRef = useRef<HTMLInputElement>(null);
@@ -80,7 +80,7 @@ export function OfferForm({ offer, onOfferChange }: OfferFormProps) {
   const debouncedOnOfferChange = useRef(
     debounce((value: Offer) => {
       onOfferChange(value);
-    }, 300)
+    }, 500)
   ).current;
 
   useEffect(() => {
@@ -205,7 +205,7 @@ export function OfferForm({ offer, onOfferChange }: OfferFormProps) {
                     <FormLabel>Tamanho da Fonte do Título ({field.value}%)</FormLabel>
                     <FormControl>
                         <Slider
-                            defaultValue={[field.value || 100]}
+                            value={[field.value || 100]}
                             onValueChange={(value) => field.onChange(value[0])}
                             max={200}
                             step={1}
@@ -320,7 +320,7 @@ export function OfferForm({ offer, onOfferChange }: OfferFormProps) {
                     <FormLabel>Tamanho da Fonte do Corpo ({field.value}%)</FormLabel>
                     <FormControl>
                         <Slider
-                            defaultValue={[field.value || 100]}
+                            value={[field.value || 100]}
                             onValueChange={(value) => field.onChange(value[0])}
                             max={200}
                             step={1}

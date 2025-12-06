@@ -111,6 +111,27 @@
         "username",
         "email"
       ]
+    },
+    "Product": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Product",
+      "type": "object",
+      "description": "Represents a product that can be used in an offer.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Product entity."
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the product."
+        },
+        "price": {
+          "type": "string",
+          "description": "Price of the product, formatted as a string."
+        }
+      },
+      "required": ["id", "name", "price"]
     }
   },
   "auth": {
@@ -168,8 +189,22 @@
             }
           ]
         }
+      },
+       {
+        "path": "/products/{productId}",
+        "definition": {
+          "entityName": "Product",
+          "schema": { "$ref": "#/backend/entities/Product" },
+          "description": "Stores the list of available products. These are public and can be read by any authenticated user.",
+          "params": [
+            {
+              "name": "productId",
+              "description": "The unique identifier for the product."
+            }
+          ]
+        }
       }
     ],
-    "reasoning": "The Firestore structure is designed to ensure authorization independence, clarity, and scalability for the OfferPrint application.  Each collection is designed with a homogenous security posture and predictable schema.  User-owned data is stored in hierarchical paths, and collaborative data is modeled with membership maps.  To achieve Authorization Independence and support secure `list` operations (QAPs), the structure leverages path-based ownership for user-specific data and denormalization where needed. Specifically:\n\n*   **Users Collection:** Stores user profiles.\n*   **Templates Collection:** Stores offer templates.  Any user can create templates, but they are only visible to the creator.\n*   **Offers Collection:** Stores offers created by users. The `userId` is denormalized into each offer document, enabling secure listing and retrieval of a user's offers without requiring `get()` calls in security rules.\n\nThis design ensures that security rules can be written based on the presence or absence of a user ID, without needing to fetch parent documents or implement complex filtering logic. This approach enables atomic operations, simplifies security rules, and makes debugging easier."
+    "reasoning": "The Firestore structure is designed to ensure authorization independence, clarity, and scalability for the OfferPrint application.  Each collection is designed with a homogenous security posture and predictable schema.  User-owned data is stored in hierarchical paths, and collaborative data is modeled with membership maps.  To achieve Authorization Independence and support secure `list` operations (QAPs), the structure leverages path-based ownership for user-specific data and denormalization where needed. Specifically:\n\n*   **Users Collection:** Stores user profiles.\n*   **Templates Collection:** Stores offer templates.  Any user can create templates, but they are only visible to the creator.\n*   **Offers Collection:** Stores offers created by users. The `userId` is denormalized into each offer document, enabling secure listing and retrieval of a user's offers without requiring `get()` calls in security rules.\n*   **Products Collection:** Stores a global list of products. This data is public to all authenticated users to populate selection dropdowns.\n\nThis design ensures that security rules can be written based on the presence or absence of a user ID, without needing to fetch parent documents or implement complex filtering logic. This approach enables atomic operations, simplifies security rules, and makes debugging easier."
   }
 }
