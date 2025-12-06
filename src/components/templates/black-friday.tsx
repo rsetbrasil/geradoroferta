@@ -17,7 +17,7 @@ export const blackFridayTemplateString = `
     </header>
     <div class="w-full h-1 bg-red-600"></div>
 
-    <main class="flex-1 flex flex-col items-center justify-center text-center p-4 bg-white" style="padding-left: 10px; padding-right: 10px;">
+    <main class="flex-1 flex flex-col items-center justify-center text-center p-4 bg-white" style="padding-left: 20px; padding-right: 20px;">
         <h2 class="font-extrabold leading-tight mb-2 uppercase text-black" style="font-size: calc(3rem * var(--size-multiplier));">
             {{descriptionLine1}}
         </h2>
