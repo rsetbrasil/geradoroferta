@@ -13,7 +13,7 @@ export const blackFridayTemplateString = `
         <div data-logo-container></div>
     </div>
     <div class="w-full h-1 bg-red-600"></div>
-    <div class="flex-1 flex flex-col items-center justify-center text-center p-4 bg-white">
+    <div class="flex flex-col items-center justify-center text-center p-4 bg-white">
         <div data-product-image-container></div>
         <h2 class="font-extrabold leading-tight mb-2 uppercase text-black" style="font-size: calc(3rem * var(--size-multiplier));">
             {{description}}
