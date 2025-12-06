@@ -34,7 +34,7 @@ export default function Home() {
   const { user, isUserLoading } = useUser();
 
   const offerRef = useMemoFirebase(() => {
-    if (!user) return null;
+    if (!user || !firestore) return null;
     return doc(firestore, "offers", `${user.uid}-${DEFAULT_OFFER_ID}`);
   }, [firestore, user]);
 
@@ -42,7 +42,7 @@ export default function Home() {
 
   // Sign in user anonymously if not logged in
   useEffect(() => {
-    if (!isUserLoading && !user) {
+    if (!isUserLoading && !user && auth) {
       initiateAnonymousSignIn(auth);
     }
   }, [isUserLoading, user, auth]);
@@ -82,7 +82,7 @@ export default function Home() {
     setOffer(newOfferData);
     if (offerRef && user) {
       // Save to Firestore non-blockingly
-      // Note: Firestore timestamps will be handled by the server
+      // We must include the userId to pass security rules for writes.
       const dataToSave = {
         ...newOfferData,
         userId: user.uid,

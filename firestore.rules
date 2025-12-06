@@ -105,7 +105,8 @@ service cloud.firestore {
      * @principle     Enforces document ownership for all operations using a denormalized 'userId' field within the document.
      */
      match /offers/{offerId} {
-      allow read: if isSignedIn() && offerId.startsWith(request.auth.uid);
+      allow get: if isSignedIn() && offerId.startsWith(request.auth.uid);
+      allow list: if false; // Explicitly deny list for now, can be enabled with queries later.
       allow create: if isNewDocumentOwner();
       allow update: if isExistingDocumentOwner() && isImmutable('userId');
       allow delete: if isExistingDocumentOwner();
