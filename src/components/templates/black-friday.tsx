@@ -1,3 +1,4 @@
+
 'use client';
 
 // This file is a static data provider for the initial template seeding.
