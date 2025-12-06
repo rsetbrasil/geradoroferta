@@ -146,24 +146,6 @@ export function OfferForm({ offer, onOfferChange, productList }: OfferFormProps)
     }
   }
 
-  const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const currentValue = e.target.value;
-    const digitsOnly = currentValue.replace(/\D/g, "");
-    
-    // Pad with leading zeros to have at least 3 digits (for cents)
-    const paddedValue = digitsOnly.padStart(3, '0');
-    
-    // Insert comma
-    const formattedValue = paddedValue.slice(0, -2) + ',' + paddedValue.slice(-2);
-    
-    form.setValue('price', formattedValue, { shouldValidate: true });
-    // Use requestAnimationFrame to avoid race conditions with state updates
-    requestAnimationFrame(() => {
-        handleChange('price');
-    });
-  }
-
-
   return (
     <Card>
       <CardHeader>
@@ -316,7 +298,10 @@ export function OfferForm({ offer, onOfferChange, productList }: OfferFormProps)
                   <FormItem>
                     <FormLabel>Preço</FormLabel>
                     <FormControl>
-                      <Input placeholder="Ex: 8,00" {...field}  onChange={handlePriceChange}/>
+                      <Input placeholder="Ex: 8,00" {...field}  onChange={e => {
+                        field.onChange(e);
+                        handleChange('price');
+                      }}/>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -498,7 +483,3 @@ export function OfferForm({ offer, onOfferChange, productList }: OfferFormProps)
     </Card>
   );
 }
-
-    
-
-    
