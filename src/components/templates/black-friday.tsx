@@ -5,7 +5,7 @@ export const BlackFridayTemplate: React.FC<{ offer: Offer }> = ({ offer }) => {
   const [integerPart, decimalPart] = (price || "0,00").split(',');
 
   return (
-    <div className="font-body w-full h-full flex flex-col bg-white text-black relative">
+    <div className="font-body w-full h-full flex flex-col bg-black text-black relative">
       {/* Header Section */}
       <div className="bg-black text-white p-4 flex justify-between items-center">
         <div className="flex flex-col items-start justify-center">
@@ -31,7 +31,7 @@ export const BlackFridayTemplate: React.FC<{ offer: Offer }> = ({ offer }) => {
       
       {/* Main Content */}
       <div className="flex-grow flex flex-col items-center justify-start text-center p-4 z-10 bg-white">
-        <div className="relative w-[150px] h-[120px] my-4">
+        <div className="relative w-[150px] h-[120px]">
             {productImageUrl ? (
                 <img src={productImageUrl} alt="Produto" className="w-full h-full object-contain" />
             ) : (
