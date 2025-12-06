@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useTransition } from "react";
@@ -52,7 +53,7 @@ export function OfferForm({ offer, onOfferChange }: OfferFormProps) {
 
   const form = useForm<Offer>({
     resolver: zodResolver(offerSchema),
-    defaultValues: offer,
+    values: offer, // Use values to keep form in sync with prop changes
   });
 
   const { watch, getValues, setValue } = form;
@@ -64,11 +65,6 @@ export function OfferForm({ offer, onOfferChange }: OfferFormProps) {
     return () => subscription.unsubscribe();
   }, [watch, onOfferChange]);
   
-  useEffect(() => {
-    form.reset(offer);
-  }, [offer, form]);
-
-
   const handleOptimize = () => {
     const currentDescription = getValues("description");
     startTransition(async () => {
