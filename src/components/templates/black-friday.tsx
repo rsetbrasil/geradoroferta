@@ -8,7 +8,7 @@ export const BlackFridayTemplate: React.FC<{ offer: Offer }> = ({ offer }) => {
   const headlineSizeMultiplier = (headlineFontSize || 100) / 100;
 
   return (
-    <div className="font-body w-full h-full flex flex-col bg-black text-black">
+    <div className="font-body w-full h-full flex flex-col bg-black text-black print:justify-between">
       {/* Header Section */}
       <div className="bg-black text-white p-4 flex justify-between items-center">
         <div className="flex flex-col items-start justify-center">
@@ -35,7 +35,7 @@ export const BlackFridayTemplate: React.FC<{ offer: Offer }> = ({ offer }) => {
       <div className="w-full h-4 bg-red-600"></div>
       
       {/* Main Content */}
-      <div className="flex-grow flex flex-col items-center justify-center text-center p-4 bg-white">
+      <div className="flex flex-col items-center justify-center text-center p-4 bg-white">
         {productImageUrl && (
           <div className="relative w-[150px] h-[120px] mb-4">
               <img src={productImageUrl} alt="Produto" className="w-full h-full object-contain" />
