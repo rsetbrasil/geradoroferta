@@ -22,16 +22,19 @@ export const blackFridayTemplateString = `
             <p class="font-semibold leading-tight mb-4 text-gray-700" style="font-size: calc(2rem * var(--size-multiplier));">{{subDescription}}</p>
         {{/if}}
         
-        <div class="flex items-baseline justify-center gap-2 my-4 text-black">
-            <span class="font-bold" style="font-size: calc(2.5rem * var(--size-multiplier));">R$</span>
-            <span class="font-extrabold leading-none" style="font-size: calc(100px * var(--size-multiplier));">
-                {{price}}
+        <div class="flex items-center justify-center gap-2 my-4 text-black">
+            <span class="font-bold self-start" style="font-size: calc(2.5rem * var(--size-multiplier));">R$</span>
+            <span class="font-extrabold leading-none" style="font-size: calc(10rem * var(--size-multiplier));">
+                {{integerPart}}
             </span>
-            <span class="font-bold self-end" style="font-size: calc(2rem * var(--size-multiplier));">{{unit}}</span>
+            <div class="flex flex-col items-start self-end">
+                <span class="font-bold" style="font-size: calc(2.5rem * var(--size-multiplier));">,{{decimalPart}}</span>
+                <span class="font-bold" style="font-size: calc(2rem * var(--size-multiplier));">{{unit}}</span>
+            </div>
         </div>
 
         {{#if discount}}
-                <p class="font-bold bg-black text-yellow-400 px-6 py-3" style="font-size: calc(1.5rem * var(--size-multiplier));">* {{discount}} *</p>
+                <p class="font-bold bg-black text-yellow-400 px-6 py-3" style="font-size: calc(1.5rem * var(--size-multiplier));">{{discount}}</p>
         {{/if}}
     </div>
 

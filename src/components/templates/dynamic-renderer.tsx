@@ -89,8 +89,8 @@ const renderStyles = (html: string, offer: Offer) => {
     const styleRegex = /style="([^"]*)"/g;
     return html.replace(styleRegex, (match, styleString) => {
         let newStyleString = styleString;
-        newStyleString = newStyleString.replace(/--size-multiplier/g, sizeMultiplier);
-        newStyleString = newStyleString.replace(/--headline-size-multiplier/g, headlineSizeMultiplier);
+        newStyleString = newStyleString.replace(/var\(--size-multiplier\)/g, String(sizeMultiplier));
+        newStyleString = newStyleString.replace(/var\(--headline-size-multiplier\)/g, String(headlineSizeMultiplier));
         return `style="${newStyleString}"`;
     });
 };
