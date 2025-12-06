@@ -4,7 +4,7 @@ import { optimizeOfferDescription } from "@/ai/flows/optimize-offer-description"
 import { z } from "zod";
 
 const schema = z.object({
-  description: z.string().min(10, { message: 'Please provide a longer description (at least 10 characters).' }),
+  description: z.string().min(10, { message: 'Forneça uma descrição mais longa (pelo menos 10 caracteres).' }),
 });
 
 export async function getOptimizedDescription(formData: FormData) {
@@ -14,7 +14,7 @@ export async function getOptimizedDescription(formData: FormData) {
 
   if (!validatedFields.success) {
     return {
-      error: validatedFields.error.flatten().fieldErrors.description?.[0] || 'Invalid input.',
+      error: validatedFields.error.flatten().fieldErrors.description?.[0] || 'Entrada inválida.',
       data: null,
     };
   }
@@ -22,7 +22,7 @@ export async function getOptimizedDescription(formData: FormData) {
   try {
     const result = await optimizeOfferDescription({ offerDescription: validatedFields.data.description });
     if (!result.optimizedDescription) {
-      throw new Error("AI did not return a description.");
+      throw new Error("A IA não retornou uma descrição.");
     }
     return {
       error: null,
@@ -31,7 +31,7 @@ export async function getOptimizedDescription(formData: FormData) {
   } catch (error) {
     console.error(error);
     return {
-      error: 'Failed to optimize description. Please try again later.',
+      error: 'Falha ao otimizar a descrição. Por favor, tente novamente mais tarde.',
       data: null,
     };
   }

@@ -12,15 +12,15 @@ import { Button } from "@/components/ui/button";
 import { Printer } from "lucide-react";
 
 const templates: Template[] = [
-  { id: "classic", name: "Classic Deal", component: ClassicDealTemplate },
-  { id: "modern", name: "Modern Splash", component: ModernSplashTemplate },
+  { id: "classic", name: "Oferta Clássica", component: ClassicDealTemplate },
+  { id: "modern", name: "Splash Moderno", component: ModernSplashTemplate },
 ];
 
 export default function Home() {
   const [offer, setOffer] = useState<Offer>({
-    description: "High-Quality Wireless Headphones with Noise-Cancelling",
-    price: "99.99",
-    discount: "25%",
+    description: "Fones de Ouvido Sem Fio de Alta Qualidade com Cancelamento de Ruído",
+    price: "99,99",
+    discount: "25% OFF",
     validity: {
       from: undefined,
       to: undefined,
@@ -31,11 +31,15 @@ export default function Home() {
   );
   
   useEffect(() => {
+    const fromDate = new Date();
+    const toDate = new Date();
+    toDate.setDate(fromDate.getDate() + 7);
+
     setOffer(prevOffer => ({
         ...prevOffer,
         validity: {
-            from: new Date(),
-            to: new Date(new Date().setDate(new Date().getDate() + 7)),
+            from: fromDate,
+            to: toDate,
         }
     }));
   }, []);
@@ -78,7 +82,7 @@ export default function Home() {
               size="lg"
             >
               <Printer className="mr-2 h-5 w-5" />
-              Print Offer
+              Imprimir Oferta
             </Button>
           </div>
         </div>

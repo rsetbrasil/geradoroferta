@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect } from "react";
@@ -24,9 +23,9 @@ export function TemplateSelector({
   onSelectTemplate,
 }: TemplateSelectorProps) {
   const [mockOffer, setMockOffer] = useState<Offer>({
-    description: "Product Name",
-    price: "100",
-    discount: "50%",
+    description: "Nome do Produto",
+    price: "100,00",
+    discount: "50% OFF",
     validity: { from: undefined, to: undefined },
   });
 
@@ -40,9 +39,9 @@ export function TemplateSelector({
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="font-headline">Choose a Template</CardTitle>
+        <CardTitle className="font-headline">Escolha um Modelo</CardTitle>
         <CardDescription>
-          Select a layout for your printed offer.
+          Selecione um layout para sua oferta impressa.
         </CardDescription>
       </CardHeader>
       <CardContent>

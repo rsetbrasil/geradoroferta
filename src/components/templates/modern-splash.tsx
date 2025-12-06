@@ -1,10 +1,11 @@
 import type { Offer } from "@/lib/types";
 import { format } from 'date-fns';
+import { ptBR } from "date-fns/locale";
 
 export const ModernSplashTemplate: React.FC<{ offer: Offer }> = ({ offer }) => {
   const { description, price, discount, validity } = offer;
   
-  const formattedDate = (date: Date | undefined) => date ? format(date, 'dd.MM.yy') : '...';
+  const formattedDate = (date: Date | undefined) => date ? format(date, 'dd.MM.yy', { locale: ptBR }) : '...';
 
   return (
     <div className="font-body w-full h-full flex flex-col justify-between p-8 bg-gray-800 text-white relative overflow-hidden">
@@ -13,7 +14,7 @@ export const ModernSplashTemplate: React.FC<{ offer: Offer }> = ({ offer }) => {
       
       <div className="z-10">
         <h2 className="font-headline text-4xl md:text-6xl font-extrabold leading-none tracking-tighter">
-          {description || "Product Description"}
+          {description || "Descrição do Produto"}
         </h2>
       </div>
 
@@ -27,11 +28,11 @@ export const ModernSplashTemplate: React.FC<{ offer: Offer }> = ({ offer }) => {
         )}
         
         <p className="text-6xl md:text-8xl font-bold text-primary leading-none tracking-tighter">
-          ${price || "0.00"}
+          R${price || "0,00"}
         </p>
 
         <div className="mt-4 text-xs text-gray-300 font-mono">
-            <p>VALID: {formattedDate(validity.from)} - {formattedDate(validity.to)}</p>
+            <p>VÁLIDO: {formattedDate(validity.from)} - {formattedDate(validity.to)}</p>
         </div>
       </div>
     </div>

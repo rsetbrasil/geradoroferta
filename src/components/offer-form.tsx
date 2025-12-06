@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useTransition } from "react";
@@ -33,8 +32,8 @@ import type { DateRange } from "react-day-picker";
 const offerSchema = z.object({
   description: z
     .string()
-    .min(10, "Description must be at least 10 characters."),
-  price: z.string().min(1, "Price is required."),
+    .min(10, "A descrição deve ter pelo menos 10 caracteres."),
+  price: z.string().min(1, "O preço é obrigatório."),
   discount: z.string().optional(),
   validity: z.object({
     from: z.date().optional(),
@@ -53,7 +52,7 @@ export function OfferForm({ offer, onOfferChange }: OfferFormProps) {
 
   const form = useForm<Offer>({
     resolver: zodResolver(offerSchema),
-    values: offer, // Use values to keep form in sync with prop changes
+    values: offer,
   });
 
   const { watch, getValues, setValue } = form;
@@ -78,14 +77,14 @@ export function OfferForm({ offer, onOfferChange }: OfferFormProps) {
           shouldDirty: true,
         });
         toast({
-          title: "Description Optimized",
-          description: "The AI has suggested an improved description.",
+          title: "Descrição Otimizada",
+          description: "A IA sugeriu uma descrição melhorada.",
         });
       }
       if (result.error) {
         toast({
           variant: "destructive",
-          title: "Optimization Failed",
+          title: "Falha na Otimização",
           description: result.error,
         });
       }
@@ -95,9 +94,10 @@ export function OfferForm({ offer, onOfferChange }: OfferFormProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="font-headline">Create Your Offer</CardTitle>
+        <CardTitle className="font-headline">Crie Sua Oferta</CardTitle>
         <CardDescription>
-          Fill in the details below. The preview will update as you type.
+          Preencha os detalhes abaixo. A pré-visualização será atualizada
+          enquanto você digita.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -109,11 +109,11 @@ export function OfferForm({ offer, onOfferChange }: OfferFormProps) {
                 name="description"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Product Description</FormLabel>
+                    <FormLabel>Descrição do Produto</FormLabel>
                     <FormControl>
                       <div className="relative">
                         <Textarea
-                          placeholder="e.g., Freshly Baked Sourdough Bread"
+                          placeholder="Ex: Pão de Fermentação Natural Fresquinho"
                           {...field}
                           rows={4}
                         />
@@ -130,7 +130,7 @@ export function OfferForm({ offer, onOfferChange }: OfferFormProps) {
                           ) : (
                             <Sparkles className="h-4 w-4 text-accent" />
                           )}
-                          Optimize
+                          Otimizar
                         </Button>
                       </div>
                     </FormControl>
@@ -145,9 +145,9 @@ export function OfferForm({ offer, onOfferChange }: OfferFormProps) {
                   name="price"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Price</FormLabel>
+                      <FormLabel>Preço</FormLabel>
                       <FormControl>
-                        <Input placeholder="e.g., 29.99" {...field} />
+                        <Input placeholder="Ex: 29,99" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -158,9 +158,9 @@ export function OfferForm({ offer, onOfferChange }: OfferFormProps) {
                   name="discount"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Discount (Optional)</FormLabel>
+                      <FormLabel>Desconto (Opcional)</FormLabel>
                       <FormControl>
-                        <Input placeholder="e.g., 50% OFF" {...field} />
+                        <Input placeholder="Ex: 50% OFF" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -173,7 +173,7 @@ export function OfferForm({ offer, onOfferChange }: OfferFormProps) {
                 name="validity"
                 render={({ field }) => (
                     <FormItem>
-                        <FormLabel>Validity Period</FormLabel>
+                        <FormLabel>Período de Validade</FormLabel>
                         <DateRangePicker 
                             date={field.value as DateRange}
                             onDateChange={(range) => field.onChange(range)}
