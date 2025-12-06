@@ -82,30 +82,27 @@ export default function Home() {
   const handleOfferChange = (newOfferData: Offer) => {
     setOffer(newOfferData);
     if (offerRef && user) {
-      // Create a deep copy to avoid modifying the original object
       const dataToSave: { [key: string]: any } = {
-        ...JSON.parse(JSON.stringify(newOfferData)),
+        ...newOfferData,
         userId: user.uid,
         updatedAt: serverTimestamp(),
       };
 
-      // Firestore does not accept 'undefined'. We need to convert them.
-      // deleteField() is used to remove a field during an update.
-      // null is used to set a field to null.
+      // Firestore does not accept 'undefined'. We need to convert them to null.
       if (dataToSave.logoUrl === undefined) {
-        dataToSave.logoUrl = deleteField();
+        dataToSave.logoUrl = null;
       }
       if (dataToSave.productImageUrl === undefined) {
-        dataToSave.productImageUrl = deleteField();
+        dataToSave.productImageUrl = null;
       }
       if (dataToSave.headlineText === undefined) {
-        dataToSave.headlineText = deleteField();
+        dataToSave.headlineText = null;
       }
       if (dataToSave.discount === undefined) {
-        dataToSave.discount = deleteField();
+        dataToSave.discount = null;
       }
       if (dataToSave.unit === undefined) {
-        dataToSave.unit = deleteField();
+        dataToSave.unit = null;
       }
 
       setDocumentNonBlocking(offerRef, dataToSave, { merge: true });
