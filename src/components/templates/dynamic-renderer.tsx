@@ -80,11 +80,11 @@ const renderImages = (html: string, offer: Offer) => {
 
     // Logo Rendering
     if (offer.logoUrl) {
-         processedHtml = processedHtml.replace(/<div data-logo-container><\/div>/g, `<img src="${offer.logoUrl}" alt="Logo" class="w-16 h-16 object-contain" />`);
+         processedHtml = processedHtml.replace(/<div data-logo-container><\/div>/g, `<img src="${offer.logoUrl}" alt="Logo" class="w-24 h-24 object-cover rounded-full" />`);
     } else {
         // This is a very specific replacement for the default logo placeholder.
         processedHtml = processedHtml.replace(/<div data-logo-container><\/div>/g, `
-             <div class="w-16 h-16 bg-transparent rounded-full flex flex-col items-center justify-center text-black border-2 border-black relative text-[8px] font-bold">
+             <div class="w-24 h-24 bg-transparent rounded-full flex flex-col items-center justify-center text-black border-2 border-black relative text-[8px] font-bold">
             </div>
         `);
     }
@@ -135,5 +135,5 @@ export const DynamicTemplateRenderer: React.FC<{ templateData: string, offer: Of
   // 4. Handle dynamic styles
   processedHtml = renderStyles(processedHtml, offer);
 
-  return <div dangerouslySetInnerHTML={{ __html: processedHtml }} />;
+  return <div className="h-full" dangerouslySetInnerHTML={{ __html: processedHtml }} />;
 };
