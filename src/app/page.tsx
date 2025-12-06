@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Printer, Loader2 } from "lucide-react";
 import { useAuth, useFirestore, useUser, useDoc, useMemoFirebase } from "@/firebase";
 import { initiateAnonymousSignIn, setDocumentNonBlocking } from "@/firebase";
-import { doc, serverTimestamp, deleteField } from "firebase/firestore";
+import { doc, serverTimestamp } from "firebase/firestore";
 
 const templates: Template[] = [
   { id: "black-friday", name: "Black Friday", component: BlackFridayTemplate },
@@ -49,35 +49,39 @@ export default function Home() {
   
   // Load offer from Firestore or set initial state
   useEffect(() => {
-    // Define the base initial offer state
     const fromDate = new Date();
     const toDate = new Date();
     toDate.setDate(fromDate.getDate() + 7);
-    const initialOffer: Offer = {
-        headlineText: "SUPER OFERTA!",
-        description: "CERVEJA LONG NECK SOL 330ML",
-        price: "8,00",
-        discount: "*LIMÃO & FRUTAS VERMELHAS*",
-        unit: "UND",
-        validity: { from: fromDate, to: toDate },
-        logoUrl: undefined,
-        productImageUrl: undefined,
+
+    // Base initial state
+    const initialOffer: Omit<Offer, 'logoUrl' | 'productImageUrl'> = {
+      headlineText: "SUPER OFERTA!",
+      description: "CERVEJA LONG NECK SOL 330ML",
+      subDescription: "",
+      price: "8,00",
+      discount: "*LIMÃO & FRUTAS VERMELHAS*",
+      unit: "UND",
+      validity: { from: fromDate, to: toDate },
     };
 
     if (!isOfferLoading && user) {
       if (offerData) {
-        // If data exists in Firestore, merge it with the initial state
+        // If data exists in Firestore, merge it
         const fromDateDb = offerData.validity?.from ? (offerData.validity.from as any).toDate() : fromDate;
         const toDateDb = offerData.validity?.to ? (offerData.validity.to as any).toDate() : toDate;
 
         setOffer({
-          ...initialOffer, // Start with defaults
-          ...offerData,   // Override with Firestore data
+          ...initialOffer, // Start with base defaults
+          ...offerData,   // Override with Firestore data (including logoUrl and productImageUrl)
           validity: { from: fromDateDb, to: toDateDb },
         });
       } else {
         // No data in Firestore, set the initial client-side state
-        setOffer(initialOffer);
+        setOffer({
+          ...initialOffer,
+          logoUrl: undefined,
+          productImageUrl: undefined,
+        });
       }
     }
   }, [offerData, isOfferLoading, user]);

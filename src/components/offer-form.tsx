@@ -34,6 +34,7 @@ const offerSchema = z.object({
   description: z
     .string()
     .min(10, "A descrição deve ter pelo menos 10 caracteres."),
+  subDescription: z.string().optional(),
   price: z.string().min(1, "O preço é obrigatório."),
   discount: z.string().optional(),
   unit: z.string().optional(),
@@ -169,6 +170,23 @@ export function OfferForm({ offer, onOfferChange }: OfferFormProps) {
                           Otimizar
                         </Button>
                       </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={form.control}
+                name="subDescription"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Subdescrição (Opcional)</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Ex: Leve 3, Pague 2"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

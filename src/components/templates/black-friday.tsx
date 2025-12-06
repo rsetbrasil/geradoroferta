@@ -1,7 +1,7 @@
 import type { Offer } from "@/lib/types";
 
 export const BlackFridayTemplate: React.FC<{ offer: Offer }> = ({ offer }) => {
-  const { description, price, discount, unit, logoUrl, productImageUrl, headlineText } = offer;
+  const { description, subDescription, price, discount, unit, logoUrl, productImageUrl, headlineText } = offer;
   const [integerPart, decimalPart] = (price || "0,00").split(',');
 
   return (
@@ -35,12 +35,15 @@ export const BlackFridayTemplate: React.FC<{ offer: Offer }> = ({ offer }) => {
             {productImageUrl ? (
                 <img src={productImageUrl} alt="Produto" className="w-full h-full object-contain" />
             ) : (
-                <div className="w-full h-full bg-white"></div>
+                <div className="w-full h-full bg-transparent"></div>
             )}
         </div>
-        <h2 className="text-4xl md:text-5xl font-extrabold leading-tight mb-4 uppercase text-black">
+        <h2 className="text-4xl md:text-5xl font-extrabold leading-tight mb-2 uppercase text-black">
           {description || "Descrição do Produto"}
         </h2>
+        {subDescription && (
+            <p className="text-2xl font-semibold leading-tight mb-4 text-gray-700">{subDescription}</p>
+        )}
         
         <div className="flex items-start justify-center gap-1 mb-2 text-black">
             <span className="text-4xl font-bold mt-4">R$</span>

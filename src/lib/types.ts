@@ -2,6 +2,7 @@ import { Timestamp } from "firebase/firestore";
 
 export type Offer = {
   description: string;
+  subDescription?: string;
   price: string;
   discount: string;
   unit?: string;

@@ -25,6 +25,7 @@ export function TemplateSelector({
   const [mockOffer, setMockOffer] = useState<Offer>({
     headlineText: "SUPER OFERTA!",
     description: "Nome do Produto",
+    subDescription: "Detalhe adicional aqui",
     price: "8,00",
     discount: "50% OFF",
     unit: "UND",
