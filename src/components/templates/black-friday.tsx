@@ -44,7 +44,7 @@ export const blackFridayTemplateString = `
     </main>
 
     <footer class="bg-red-600 text-white text-center py-3">
-        <h3 class="text-4xl font-extrabold tracking-wide">IMPERDÍVEL</h3>
+        <h3 class="text-4xl font-extrabold tracking-wide">IMBATÍVEL</h3>
     </footer>
 </div>
 `
