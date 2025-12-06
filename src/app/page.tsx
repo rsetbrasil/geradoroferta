@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect, useMemo, useCallback } from "react";
@@ -126,28 +127,34 @@ export default function Home() {
     }
   }, [offerData, isOfferLoading, user]);
 
+  const debouncedSave = useMemo(
+    () =>
+      debounce((dataToSave: Offer, ref: any, user: any) => {
+        const payload: { [key: string]: any } = {
+            ...dataToSave,
+            userId: user.uid,
+            updatedAt: serverTimestamp(),
+        };
+
+        Object.keys(payload).forEach(key => {
+            if (payload[key] === undefined) {
+                payload[key] = null;
+            }
+        });
+
+        setDocumentNonBlocking(ref, payload, { merge: true });
+      }, 500),
+    []
+  );
+
   const handleOfferChange = useCallback((newOfferData: Offer) => {
       setOffer(newOfferData);
       if (offerRef && user) {
-        const dataToSave: { [key: string]: any } = {
-          ...newOfferData,
-          userId: user.uid,
-          updatedAt: serverTimestamp(),
-        };
-
-        Object.keys(dataToSave).forEach(key => {
-          if (dataToSave[key] === undefined) {
-            dataToSave[key] = null;
-          }
-        });
-        
-        setDocumentNonBlocking(offerRef, dataToSave, { merge: true });
+        debouncedSave(newOfferData, offerRef, user);
       }
     },
-    [offerRef, user]
+    [offerRef, user, debouncedSave]
   );
-  
-  const debouncedOfferChange = useMemo(() => debounce(handleOfferChange, 500), [handleOfferChange]);
 
   const selectedTemplate = useMemo(() => 
     templates?.find((t) => t.id === selectedTemplateId),
@@ -176,7 +183,7 @@ export default function Home() {
           <div className="no-print flex flex-col gap-8">
             <OfferForm 
               offer={offer} 
-              onOfferChange={debouncedOfferChange}
+              onOfferChange={handleOfferChange}
               productList={productList || []}
             />
             <TemplateSelector

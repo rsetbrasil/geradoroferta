@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useTransition, useRef } from "react";
@@ -73,19 +74,22 @@ export function OfferForm({ offer, onOfferChange, productList }: OfferFormProps)
     defaultValues: offer,
   });
 
-  const { watch, getValues, setValue, reset } = form;
+  const { getValues, setValue, reset, formState, trigger } = form;
 
   useEffect(() => {
     reset(offer);
   }, [offer, reset]);
 
-  useEffect(() => {
-    const subscription = watch((value) => {
-      onOfferChange(value as Offer);
-    });
-    return () => subscription.unsubscribe();
-  }, [watch, onOfferChange]);
-
+  const handleChange = async (field?: keyof Offer) => {
+    if (field) {
+      await trigger(field);
+    } else {
+      await trigger();
+    }
+    if (Object.keys(formState.errors).length === 0) {
+      onOfferChange(getValues());
+    }
+  }
 
   const handleOptimize = () => {
     const currentDescription = getValues("description");
@@ -99,6 +103,7 @@ export function OfferForm({ offer, onOfferChange, productList }: OfferFormProps)
           shouldValidate: true,
           shouldDirty: true,
         });
+        handleChange("description");
         toast({
           title: "Descrição Otimizada",
           description: "A IA sugeriu uma descrição melhorada.",
@@ -123,6 +128,7 @@ export function OfferForm({ offer, onOfferChange, productList }: OfferFormProps)
       const reader = new FileReader();
       reader.onloadend = () => {
         setValue(field, reader.result as string, { shouldDirty: true });
+        handleChange(field);
       };
       reader.readAsDataURL(file);
     }
@@ -133,6 +139,7 @@ export function OfferForm({ offer, onOfferChange, productList }: OfferFormProps)
     if (selectedProduct) {
         setValue("description", selectedProduct.name, { shouldValidate: true, shouldDirty: true });
         setValue("price", selectedProduct.price, { shouldValidate: true, shouldDirty: true });
+        handleChange();
     }
   }
 
@@ -147,7 +154,7 @@ export function OfferForm({ offer, onOfferChange, productList }: OfferFormProps)
       </CardHeader>
       <CardContent>
         <Form {...form}>
-          <form className="space-y-6">
+          <form className="space-y-6" onChange={() => handleChange()}>
              <FormItem>
               <FormLabel>Selecionar Produto</FormLabel>
               <Select onValueChange={handleProductSelect}>
@@ -194,7 +201,10 @@ export function OfferForm({ offer, onOfferChange, productList }: OfferFormProps)
                   <FormControl>
                       <Slider
                           value={[field.value || 100]}
-                          onValueChange={(value) => field.onChange(value[0])}
+                          onValueChange={(value) => {
+                              field.onChange(value[0]);
+                              handleChange('headlineFontSize');
+                          }}
                           max={200}
                           step={1}
                       />
@@ -311,7 +321,10 @@ export function OfferForm({ offer, onOfferChange, productList }: OfferFormProps)
                   <FormControl>
                       <Slider
                           value={[field.value || 100]}
-                          onValueChange={(value) => field.onChange(value[0])}
+                          onValueChange={(value) => {
+                            field.onChange(value[0]);
+                            handleChange('fontSize');
+                          }}
                           max={200}
                           step={1}
                       />
@@ -339,14 +352,15 @@ export function OfferForm({ offer, onOfferChange, productList }: OfferFormProps)
                     accept="image/png, image/jpeg, image/svg+xml"
                     className="hidden"
                   />
-                  {watch("logoUrl") && (
+                  {form.watch("logoUrl") && (
                     <Button
                       type="button"
                       variant="ghost"
                       size="sm"
-                      onClick={() =>
-                        setValue("logoUrl", undefined, { shouldDirty: true })
-                      }
+                      onClick={() => {
+                        setValue("logoUrl", undefined, { shouldDirty: true });
+                        handleChange("logoUrl");
+                      }}
                     >
                       Remover
                     </Button>
@@ -372,16 +386,17 @@ export function OfferForm({ offer, onOfferChange, productList }: OfferFormProps)
                     accept="image/png, image/jpeg, image/svg+xml"
                     className="hidden"
                   />
-                  {watch("productImageUrl") && (
+                  {form.watch("productImageUrl") && (
                     <Button
                       type="button"
                       variant="ghost"
                       size="sm"
-                      onClick={() =>
+                      onClick={() => {
                         setValue("productImageUrl", undefined, {
                           shouldDirty: true,
-                        })
-                      }
+                        });
+                        handleChange("productImageUrl");
+                      }}
                     >
                       Remover
                     </Button>
@@ -399,7 +414,10 @@ export function OfferForm({ offer, onOfferChange, productList }: OfferFormProps)
                   <FormLabel>Período de Validade</FormLabel>
                   <DateRangePicker
                     date={field.value as DateRange}
-                    onDateChange={(range) => field.onChange(range)}
+                    onDateChange={(range) => {
+                      field.onChange(range);
+                       handleChange('validity');
+                    }}
                   />
                 </FormItem>
               )}
