@@ -37,12 +37,12 @@ export const BlackFridayTemplate: React.FC<{ offer: Offer }> = ({ offer }) => {
       <div className="w-full h-4 bg-red-600"></div>
       
       {/* Main Content */}
-      <div className="flex-grow flex flex-col items-center justify-center text-center p-4 z-10 bg-white">
-        <h2 className="text-4xl md:text-5xl font-extrabold leading-tight mb-4 uppercase text-black">
+      <div className="flex-grow flex flex-col items-center justify-center text-center p-4 z-10 bg-black">
+        <h2 className="text-4xl md:text-5xl font-extrabold leading-tight mb-4 uppercase text-white">
           {description || "Descrição do Produto"}
         </h2>
         
-        <div className="flex items-start justify-center gap-1 mb-2 text-black">
+        <div className="flex items-start justify-center gap-1 mb-2 text-white">
             <span className="text-4xl font-bold mt-4">R$</span>
             <span className="text-9xl md:text-[160px] font-extrabold leading-none">
                 {integerPart}
