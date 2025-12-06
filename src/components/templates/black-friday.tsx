@@ -5,13 +5,13 @@
 // It exports a string of HTML with Handlebars-like syntax for dynamic rendering.
 export const blackFridayTemplateString = `
 <div class="font-body w-full h-full flex flex-col bg-white text-black">
-    <header class="bg-black text-white p-4 flex justify-between items-center">
-        <div class="flex flex-col items-start justify-center">
-            {{#if headlineText}}
-            <h3 class="font-bold uppercase text-yellow-400" style="font-size: calc(2.5rem * var(--headline-size-multiplier));">{{headlineText}}</h3>
+    <header class="bg-black text-white p-4 flex justify-between items-center relative">
+        <div class="w-full flex justify-center items-center">
+             {{#if headlineText}}
+            <h3 class="font-bold uppercase text-yellow-400 text-center" style="font-size: calc(2.5rem * var(--headline-size-multiplier)); letter-spacing: 0.05em;">{{headlineText}}</h3>
             {{/if}}
         </div>
-        <div data-logo-container></div>
+        <div class="absolute right-4 top-1/2 -translate-y-1/2" data-logo-container></div>
     </header>
     <div class="w-full h-1 bg-red-600"></div>
 
@@ -20,26 +20,26 @@ export const blackFridayTemplateString = `
             {{descriptionLine1}}
         </h2>
         {{#if descriptionLine2}}
-            <h2 class="font-extrabold leading-tight mb-2 uppercase text-black" style="font-size: calc(2rem * var(--size-multiplier));">{{descriptionLine2}}</h2>
+            <h2 class="font-extrabold leading-tight mb-4 uppercase text-black" style="font-size: calc(3rem * var(--size-multiplier));">{{descriptionLine2}}</h2>
         {{/if}}
         
         {{#if subDescription}}
-            <p class="font-semibold leading-tight mb-4 text-gray-700" style="font-size: calc(2rem * var(--size-multiplier));">{{subDescription}}</p>
+            <p class="font-semibold leading-tight mb-4 text-gray-700" style="font-size: calc(1.5rem * var(--size-multiplier));">{{subDescription}}</p>
         {{/if}}
         
-        <div class="flex items-center justify-center gap-2 my-4 text-black">
-            <span class="font-bold self-start" style="font-size: calc(2.5rem * var(--size-multiplier));">R$</span>
+        <div class="flex items-start justify-center gap-1 my-4 text-black">
+            <span class="font-bold mt-4" style="font-size: calc(2.5rem * var(--size-multiplier));">R$</span>
             <span class="font-extrabold leading-none" style="font-size: calc(10rem * var(--size-multiplier));">
                 {{integerPart}}
             </span>
-            <div class="flex flex-col items-start self-center">
+            <div class="flex flex-col items-start mt-4">
                 <span class="font-bold" style="font-size: calc(2.5rem * var(--size-multiplier));">,{{decimalPart}}</span>
                 <span class="font-bold" style="font-size: calc(2rem * var(--size-multiplier));">{{unit}}</span>
             </div>
         </div>
 
         {{#if discount}}
-            <p class="font-bold bg-black text-yellow-400 px-6 py-3" style="font-size: calc(1.5rem * var(--discount-size-multiplier));">{{discount}}</p>
+             <p class="font-bold bg-black text-yellow-400 px-6 py-2" style="font-size: calc(1.25rem * var(--discount-size-multiplier));">{{discount}}</p>
         {{/if}}
     </main>
 
@@ -47,4 +47,4 @@ export const blackFridayTemplateString = `
         <h3 class="text-4xl font-extrabold tracking-wide">IMPERDÍVEL</h3>
     </footer>
 </div>
-`;
+`

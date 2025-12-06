@@ -84,14 +84,7 @@ const renderImages = (html: string, offer: Offer) => {
     } else {
         // This is a very specific replacement for the default logo placeholder.
         processedHtml = processedHtml.replace(/<div data-logo-container><\/div>/g, `
-             <div class="w-16 h-16 bg-yellow-400 rounded-full flex flex-col items-center justify-center text-black border-2 border-black relative text-[8px] font-bold">
-              <span>MR BEBIDAS</span>
-              <div class="w-8 h-8 rounded-full bg-red-600 flex items-center justify-center text-white text-lg font-bold relative">
-                <span class="absolute left-[-1px] top-1/2 -translate-y-1/2 text-black text-2xl font-extrabold" style="font-family: Arial, sans-serif;">M</span>
-                <span class="absolute right-[-1px] top-1/2 -translate-y-1/2 text-black text-2xl font-extrabold -scale-x-100" style="font-family: Arial, sans-serif;">R</span>
-              </div>
-              <span>DISTRIBUIDORA</span>
-              <div class="absolute inset-0 rounded-full border border-black"></div>
+             <div class="w-16 h-16 bg-transparent rounded-full flex flex-col items-center justify-center text-black border-2 border-black relative text-[8px] font-bold">
             </div>
         `);
     }
@@ -110,7 +103,7 @@ const renderImages = (html: string, offer: Offer) => {
 const renderStyles = (html: string, offer: Offer) => {
     const sizeMultiplier = (offer.fontSize || 100) / 100;
     const headlineSizeMultiplier = (offer.headlineFontSize || 100) / 100;
-    const discountSizeMultiplier = (offer.discountFontSize || 100) / 100;
+    const discountSizeMultiplier = (offer.discountFontSize || 60) / 100;
 
     const styleRegex = /style="([^"]*)"/g;
     return html.replace(styleRegex, (match, styleString) => {
