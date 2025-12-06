@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useTransition, useRef } from "react";
+import { useEffect, useTransition, useRef, useCallback } from "react";
 import { useForm, FormProvider, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -37,6 +37,7 @@ import { Loader2, Sparkles, Upload } from "lucide-react";
 import { DateRangePicker } from "./date-range-picker";
 import type { DateRange } from "react-day-picker";
 import { Slider } from "./ui/slider";
+import debounce from 'lodash.debounce';
 
 const offerSchema = z.object({
   headlineText: z.string().optional(),
@@ -73,14 +74,30 @@ export function OfferForm({ offer, onOfferChange }: OfferFormProps) {
     values: offer,
   });
 
-  const { watch, getValues, setValue } = form;
+  const { watch, getValues, setValue, reset } = form;
+
+  // Use a ref to hold the debounced function
+  const debouncedOnOfferChange = useRef(
+    debounce((value: Offer) => {
+      onOfferChange(value);
+    }, 300)
+  ).current;
+
+  useEffect(() => {
+    // Reset the form if the initial offer data changes from the parent
+    reset(offer);
+  }, [offer, reset]);
 
   useEffect(() => {
     const subscription = watch((value) => {
-      onOfferChange(value as Offer);
+      // Use the debounced function to notify the parent
+      debouncedOnOfferChange(value as Offer);
     });
-    return () => subscription.unsubscribe();
-  }, [watch, onOfferChange]);
+    return () => {
+      subscription.unsubscribe();
+      debouncedOnOfferChange.cancel(); // Clean up debounce on unmount
+    };
+  }, [watch, debouncedOnOfferChange]);
 
   const handleOptimize = () => {
     const currentDescription = getValues("description");

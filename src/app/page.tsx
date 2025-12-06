@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo, useRef } from "react";
+import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import type { Offer, Template, OfferDocument } from "@/lib/types";
 import { OfferForm } from "@/components/offer-form";
 import { OfferPreview } from "@/components/offer-preview";
@@ -28,7 +28,6 @@ export default function Home() {
   const [selectedTemplateId, setSelectedTemplateId] = useState<string>(
     templates[0].id
   );
-  const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const auth = useAuth();
   const firestore = useFirestore();
@@ -90,20 +89,12 @@ export default function Home() {
   }, [offerData, isOfferLoading, user]);
 
 
-  const handleOfferChange = (newOfferData: Offer) => {
+  const handleOfferChange = useCallback((newOfferData: Offer) => {
     setOffer(newOfferData);
-  };
 
-  // Debounce Firestore writes
-  useEffect(() => {
-    if (offer && offerRef && user) {
-      if (debounceTimeoutRef.current) {
-        clearTimeout(debounceTimeoutRef.current);
-      }
-      
-      debounceTimeoutRef.current = setTimeout(() => {
+    if (offerRef && user) {
         const dataToSave: { [key: string]: any } = {
-          ...offer,
+          ...newOfferData,
           userId: user.uid,
           updatedAt: serverTimestamp(),
         };
@@ -116,15 +107,8 @@ export default function Home() {
         });
         
         setDocumentNonBlocking(offerRef, dataToSave, { merge: true });
-      }, 500); // 500ms debounce delay
     }
-
-    return () => {
-      if (debounceTimeoutRef.current) {
-        clearTimeout(debounceTimeoutRef.current);
-      }
-    };
-  }, [offer, offerRef, user]);
+  }, [offerRef, user]);
 
 
   const selectedTemplate =
