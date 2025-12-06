@@ -70,17 +70,15 @@ export function OfferForm({ offer, onOfferChange, productList }: OfferFormProps)
 
   const form = useForm<Offer>({
     resolver: zodResolver(offerSchema),
-    values: offer,
+    defaultValues: offer,
   });
 
   const { watch, getValues, setValue, reset } = form;
 
   useEffect(() => {
-    // Reset the form if the initial offer data changes from the parent
     reset(offer);
   }, [offer, reset]);
 
-  // Subscribe to form changes and notify the parent component
   useEffect(() => {
     const subscription = watch((value) => {
       onOfferChange(value as Offer);

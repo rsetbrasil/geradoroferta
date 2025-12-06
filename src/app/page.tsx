@@ -126,8 +126,7 @@ export default function Home() {
     }
   }, [offerData, isOfferLoading, user]);
 
-  const debouncedSave = useCallback(
-    debounce((newOfferData: Offer) => {
+  const handleOfferChange = useCallback((newOfferData: Offer) => {
       if (offerRef && user) {
         const dataToSave: { [key: string]: any } = {
           ...newOfferData,
@@ -141,16 +140,14 @@ export default function Home() {
           }
         });
         
+        setOffer(newOfferData);
         setDocumentNonBlocking(offerRef, dataToSave, { merge: true });
       }
-    }, 500),
+    },
     [offerRef, user]
   );
-
-  const handleOfferChange = useCallback((newOfferData: Offer) => {
-    setOffer(newOfferData);
-    debouncedSave(newOfferData);
-  }, [debouncedSave]);
+  
+  const debouncedOfferChange = useMemo(() => debounce(handleOfferChange, 500), [handleOfferChange]);
 
   const selectedTemplate = useMemo(() => 
     templates?.find((t) => t.id === selectedTemplateId),
@@ -179,7 +176,7 @@ export default function Home() {
           <div className="no-print flex flex-col gap-8">
             <OfferForm 
               offer={offer} 
-              onOfferChange={handleOfferChange}
+              onOfferChange={debouncedOfferChange}
               productList={productList || []}
             />
             <TemplateSelector
