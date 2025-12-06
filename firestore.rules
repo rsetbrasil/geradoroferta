@@ -124,7 +124,8 @@ service cloud.firestore {
      * @principle     This collection is treated as public but write-managed.
      */
     match /products/{productId} {
-      allow read: if isSignedIn();
+      allow get: if isSignedIn();
+      allow list: if isSignedIn();
       allow write: if isSignedIn(); // Allows any authenticated user to manage products
     }
   }
