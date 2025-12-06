@@ -29,17 +29,14 @@ export const BlackFridayTemplate: React.FC<{ offer: Offer }> = ({ offer }) => {
       </div>
       <div className="w-full h-4 bg-red-600"></div>
 
-      {/* Background Swirl */}
+      {/* Background */}
       <div 
-        className="absolute inset-0 bg-repeat bg-center"
-        style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23f0f0f0' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-          zIndex: 0,
-        }}
+        className="absolute inset-0 bg-black"
+        style={{ zIndex: 0 }}
       ></div>
 
       {/* Main Content */}
-      <div className="flex-grow flex flex-col items-center justify-center text-center p-4 z-10">
+      <div className="flex-grow flex flex-col items-center justify-center text-center p-4 z-10 bg-black text-white">
         <h2 className="text-2xl md:text-3xl font-extrabold leading-tight mb-4 uppercase">
           {description || "Descrição do Produto"}
         </h2>
@@ -56,7 +53,7 @@ export const BlackFridayTemplate: React.FC<{ offer: Offer }> = ({ offer }) => {
         </div>
 
         {discount && (
-             <p className="font-bold text-lg text-gray-700">* {discount} *</p>
+             <p className="font-bold text-lg text-gray-300">* {discount} *</p>
         )}
       </div>
 
