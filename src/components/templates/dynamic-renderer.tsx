@@ -13,6 +13,7 @@ const interpolations = (offer: Offer) => {
   const [integerPart, decimalPart] = (offer.price || "0,00").split(',');
   const sizeMultiplier = (offer.fontSize || 100) / 100;
   const headlineSizeMultiplier = (offer.headlineFontSize || 100) / 100;
+  const discountSizeMultiplier = (offer.discountFontSize || 100) / 100;
   const formattedFromDate = (date: Date | undefined) => date ? format(date, 'dd/MM/yyyy', { locale: ptBR }) : 'N/A';
   const formattedToDate = (date: Date | undefined) => date ? format(date, 'dd/MM/yyyy', { locale: ptBR }) : 'N/A';
   const formattedFromDateModern = (date: Date | undefined) => date ? format(date, 'dd.MM.yy', { locale: ptBR }) : '...';
@@ -37,8 +38,10 @@ const interpolations = (offer: Offer) => {
     '{{decimalPart}}': decimalPart,
     '{{fontSize}}': offer.fontSize || 100,
     '{{headlineFontSize}}': offer.headlineFontSize || 100,
+    '{{discountFontSize}}': offer.discountFontSize || 100,
     '{{sizeMultiplier}}': sizeMultiplier,
     '{{headlineSizeMultiplier}}': headlineSizeMultiplier,
+    '{{discountSizeMultiplier}}': discountSizeMultiplier,
     '{{validity.from}}': formattedFromDate(offer.validity?.from),
     '{{validity.to}}': formattedToDate(offer.validity?.to),
     '{{validity.from.modern}}': formattedFromDateModern(offer.validity?.from),
@@ -62,6 +65,9 @@ const renderConditions = (html: string, offer: Offer) => {
         }
         if (key === 'descriptionLine2') {
             return descriptionLine2 ? content : '';
+        }
+        if (key === 'discount') {
+            return offer.discount ? content : '';
         }
         return offer[key as keyof Offer] ? content : '';
     });
@@ -103,12 +109,14 @@ const renderImages = (html: string, offer: Offer) => {
 const renderStyles = (html: string, offer: Offer) => {
     const sizeMultiplier = (offer.fontSize || 100) / 100;
     const headlineSizeMultiplier = (offer.headlineFontSize || 100) / 100;
+    const discountSizeMultiplier = (offer.discountFontSize || 100) / 100;
 
     const styleRegex = /style="([^"]*)"/g;
     return html.replace(styleRegex, (match, styleString) => {
         let newStyleString = styleString;
         newStyleString = newStyleString.replace(/var\(--size-multiplier\)/g, String(sizeMultiplier));
         newStyleString = newStyleString.replace(/var\(--headline-size-multiplier\)/g, String(headlineSizeMultiplier));
+        newStyleString = newStyleString.replace(/var\(--discount-size-multiplier\)/g, String(discountSizeMultiplier));
         return `style="${newStyleString}"`;
     });
 };
@@ -133,5 +141,5 @@ export const DynamicTemplateRenderer: React.FC<{ templateData: string, offer: Of
   // 4. Handle dynamic styles
   processedHtml = renderStyles(processedHtml, offer);
 
-  return <div className="h-full" dangerouslySetInnerHTML={{ __html: processedHtml }} />;
+  return <div className="w-full h-full" dangerouslySetInnerHTML={{ __html: processedHtml }} />;
 };

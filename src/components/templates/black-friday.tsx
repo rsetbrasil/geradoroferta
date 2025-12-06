@@ -20,7 +20,7 @@ export const blackFridayTemplateString = `
             {{descriptionLine1}}
         </h2>
         {{#if descriptionLine2}}
-            <h2 class="font-extrabold leading-tight mb-2 uppercase text-black" style="font-size: calc(3rem * var(--size-multiplier));">{{descriptionLine2}}</h2>
+            <h2 class="font-extrabold leading-tight mb-2 uppercase text-black" style="font-size: calc(2rem * var(--size-multiplier));">{{descriptionLine2}}</h2>
         {{/if}}
         
         {{#if subDescription}}
@@ -39,7 +39,7 @@ export const blackFridayTemplateString = `
         </div>
 
         {{#if discount}}
-                <p class="font-bold bg-black text-yellow-400 px-6 py-3" style="font-size: calc(1.5rem * var(--size-multiplier));">{{discount}}</p>
+                <p class="font-bold bg-black text-yellow-400 px-6 py-3" style="font-size: calc(1.5rem * var(--discount-size-multiplier));">{{discount}}</p>
         {{/if}}
     </main>
 

@@ -105,6 +105,7 @@ export default function Home() {
       validity: { from: fromDate, to: toDate },
       fontSize: 100,
       headlineFontSize: 100,
+      discountFontSize: 100,
     };
 
     if (!isOfferLoading && user) {
