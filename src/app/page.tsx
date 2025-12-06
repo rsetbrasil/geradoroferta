@@ -127,6 +127,7 @@ export default function Home() {
   }, [offerData, isOfferLoading, user]);
 
   const handleOfferChange = useCallback((newOfferData: Offer) => {
+      setOffer(newOfferData);
       if (offerRef && user) {
         const dataToSave: { [key: string]: any } = {
           ...newOfferData,
@@ -140,7 +141,6 @@ export default function Home() {
           }
         });
         
-        setOffer(newOfferData);
         setDocumentNonBlocking(offerRef, dataToSave, { merge: true });
       }
     },
